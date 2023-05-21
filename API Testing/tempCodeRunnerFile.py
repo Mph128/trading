@@ -1,0 +1,1 @@
+msft = yf.Ticker("MSFT")
