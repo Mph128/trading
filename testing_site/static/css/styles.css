@@ -1,3 +1,20 @@
 #timeRangeSlider {
     background: linear-gradient(to right, #007bff 0%, #007bff 20%, #ced4da 20%, #ced4da 80%, #007bff 80%, #007bff 100%);
 }
+
+body {
+    background-color: #f8f9fa;
+}
+.jumbotron {
+    background-color: #343a40;
+    color: #fff;
+    padding: 100px 20px;
+    margin-bottom: 0;
+}
+.nav-item {
+    margin-right: 10px;
+}
+.slider-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}

@@ -9,7 +9,11 @@ def index():
 
 @app.route('/leverage_testing')
 def leverage_testing():
+    
+
+    #return render_template('leverage_testing.html')
     return render_template('leverage_testing.html')
+
 
 @app.route('/chart')
 def chart():
@@ -18,14 +22,26 @@ def chart():
 
     return render_template('chart.html', labels=labels, data=data)
 
-@app.route('/update_slider', methods=['POST'])
-def update_slider():
+@app.route('/update_time', methods=['POST'])
+def update_time():
     min_value = int(request.form['time_min'])
     max_value = int(request.form['time_max'])
 
-    # Perform any desired operations with the slider values here
-    # For example, you can return the values back to the client
-    return jsonify({'min': min_value, 'max': max_value})
+    # use min_value and max_value to update the chart
+    #.............
+
+    # returns the range to console
+    return jsonify({'time_min': min_value, 'time_max': max_value})
+
+@app.route('/update_leverage', methods=['POST'])
+def update_leverage():
+    value = request.form['leverage']
+
+    # use value to update the chart
+    #.............
+
+    # returns the range to console
+    return jsonify({'leverage': value})
 
 
 

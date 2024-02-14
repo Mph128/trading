@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Algo Trading</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .jumbotron {
-            background-color: #343a40;
-            color: #fff;
-            padding: 100px 20px;
-            margin-bottom: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
 </head>
 <body>
     <div class="jumbotron text-center">
         <h1 class="display-4">Algo Trading</h1>
         <p class="lead">The goal of this project is to create a trading bot that will determine when to buy and sell stocks based off of live market data.</p>
     </div>
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/leverage_testing">Leverage Testing</a>
+            </li>
+        </ul>
+    </nav>
 
     <div class="container mt-5">
         <h2>Python Libraries Used:</h2>

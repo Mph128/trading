@@ -1,4 +1,4 @@
 numpy==1.23.3
-yfinance==0.2.18
+yfinance==0.2.36
 alpaca-py==0.8.2
 Flask==2.2.3
