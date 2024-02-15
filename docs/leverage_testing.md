@@ -24,15 +24,15 @@ Next we can multiply these equations together to get a higher order equation tha
 ```
 def calculate_leverage_equation(self):
 
-        # Define symbolic variable
-        x = symbols('x')
+    # Define symbolic variable
+    x = symbols('x')
 
-        # Initialize the equation
-        eq = 1
+    # Initialize the equation
+    eq = 1
 
-        # Iterate over daily changes and update the equation
-        for change in self.daily_changes[1:]:
-            eq *= (change * x + 1)
+    # Iterate over daily changes and update the equation
+    for change in self.daily_changes[1:]:
+        eq *= (change * x + 1)
 ```
 
 We can then graph this equation and find the local maxima in a specified range. From figure 1 we can see that the return of SPY from 1994-10-01 to 2023-12-31 at 1x leverage was about 17.5x. This makes sense as this averages out to about a 10% gain each year. We also find that using 3.1x *daily* leverage would more than 10x those returns over the same period. 
@@ -42,3 +42,11 @@ We can then graph this equation and find the local maxima in a specified range. 
 ![SPY leverage analysis from 1994-10-01 to 2023-12-31](/images/Figure_1.png) *Figure 1: SPY leverage analysis from 1994-10-01 to 2023-12-31*
 
 The problem with this approach is that it requires a ton of processing time and is highly impractical for a lighweight research tool. 
+
+### Possible solutions:
+
+1. Use numpy arrays to speed up matrix multiplication
+
+2. look into functional programming languages such as hascal, might be more intuitive to approach this problem, although may not be more efficient
+
+---

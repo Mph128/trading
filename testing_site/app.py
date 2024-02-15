@@ -8,20 +8,14 @@ app = Flask(__name__)
 def index():
     return render_template('home.html')
 
+leverage_data = lt.LeverageTesting('SPY','1d')
+
 @app.route('/leverage_testing')
 def leverage_testing():
-
 
     #return render_template('leverage_testing.html')
     return render_template('leverage_testing.html')
 
-
-@app.route('/chart')
-def chart():
-    labels = ['A', 'B', 'C', 'D', 'E']
-    data = [random.randint(1, 10) for _ in range(len(labels))]  # Generate random data
-
-    return render_template('chart.html', labels=labels, data=data)
 
 @app.route('/update_time', methods=['POST'])
 def update_time():
@@ -30,7 +24,7 @@ def update_time():
 
     # use min_value and max_value to update the chart
     #.............
-
+    leverage_data.set_time_range_percentage(min_value, max_value)
     # returns the range to console
     return jsonify({'time_min': min_value, 'time_max': max_value})
 
@@ -44,6 +38,24 @@ def update_leverage():
     # returns the range to console
     return jsonify({'leverage': value})
 
+
+@app.route('/update_ticker', methods=['POST'])
+def update_ticker():
+    value = request.form['ticker']
+
+    # use value to update the chart
+    #.............
+
+    # returns the range to console
+    return jsonify({'ticker': value})
+
+@app.route('/get_time_range', methods=['GET'])
+def get_time_range():
+    data = {
+        'start_time': leverage_data.get_start_date(),
+        'end_time': leverage_data.get_end_date()
+    }
+    return jsonify(data)
 
 
 if __name__ == '__main__':

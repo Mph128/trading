@@ -31,7 +31,6 @@ class LeverageTesting:
         self.leveraged_cumulative_returns = (1 + self.leveraged_returns).cumprod()
 
 
-
     #getting a specific close price and a hist of close prices
     def get_close_price(self, date):
         return historical_data.get_close_price(date, self.hist)
@@ -70,6 +69,10 @@ class LeverageTesting:
         self.start_date = start_date
         self.end_date = end_date
         self.update_data_from_time_range()
+    def set_time_range_percentage(self, start_percentage, end_percentage):
+        self.start_date = self.hist.index[int(len(self.hist) * start_percentage/100-1)]
+        self.end_date = self.hist.index[int(len(self.hist) * end_percentage/100-1)]
+        self.update_data_from_time_range()
 
     #getters for start and end date
     def get_start_date(self):   
@@ -92,6 +95,7 @@ class LeverageTesting:
         self.leveraged_returns = self.daily_changes * self.leverage
         self.leveraged_cumulative_returns = (1 + self.leveraged_returns).cumprod()
 
+    #calculate the optimal leverage equation
     def calculate_leverage_equation(self):
 
         # Define symbolic variable
@@ -121,10 +125,13 @@ class LeverageTesting:
         print("X values corresponding to peaks:", x_values[peaks])
 
         # Plot the equation and highlight peaks
-        plt.plot(x_values, y_values)
-        plt.plot(x_values[peaks], y_values[peaks], "x")
-        plt.title('Peaks of the Equation')
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.grid(True)
-        plt.show()
+        # plt.plot(x_values, y_values)
+        # plt.plot(x_values[peaks], y_values[peaks], "x")
+        # plt.title('Peaks of the Equation')
+        # plt.xlabel('x')
+        # plt.ylabel('y')
+        # plt.grid(True)
+        # plt.show()
+
+        return x_values, y_values, peaks
+    

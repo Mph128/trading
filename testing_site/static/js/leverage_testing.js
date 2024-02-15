@@ -75,9 +75,24 @@
  }
 
  // Function to update the label with the current value of the time range
- function updateTimeRange(time_min, time_max) {
-     $('#timeRangeLabel').text(time_min + ' - ' + time_max);
- }
+function updateTimeRange() {
+    $.ajax({
+        url: '/get_time_range',
+        type: 'GET',
+        success: function(response) {
+            // Handle the response data
+            console.log(response);
+            // Update the time range label
+            $('#timeRangeLabel').text(response.start_time + ' - ' + response.end_time);
+        },
+        error: function(xhr, status, error) {
+            // Handle errors
+            console.error(error);
+        }
+    });
+}
+
+updateTimeRange();
 
  // Function to update slider display
  function updateSlider(time_min, time_max) {
@@ -90,6 +105,21 @@
  
  
  $(function() {
+
+    // Event listener for the ticker submit button
+    $('#submitBtn').click(function() {
+        $.ajax({
+            type: "POST",
+            url: "/update_ticker",
+            data: {ticker: $('#ticker').val()},
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
 
      // Event listener for the leverage range slider
      $('#leverageRange').on('input', function() {
@@ -113,8 +143,6 @@
      // Event listener for the time range slider
      $("#timeRangeSlider").slider({
          range: true,
-         time_min: 0,
-         time_max: 100,
          values: [0, 100],
          slide: function(event, ui) {
              // Update chart based on time range
@@ -127,7 +155,7 @@
              // Update the slider background color
              updateSlider(time_min, time_max);
              // Update the time range label
-             updateTimeRange(time_min, time_max);
+             updateTimeRange();
 
              $.ajax({
                  type: "POST",

@@ -10,13 +10,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
-
 </head>
 <body>
     <div class="jumbotron text-center">
         <h1 class="display-4">Leverage Testing</h1>
-        <p class="lead">The goal of leverage testing is to find the optimal amount of leverage (daily leverage) to trade with of certain timeframes. To achieve this, I will implement a website with easy UI to backtest strategies.</p>
+        <p class="lead">The goal of leverage testing is to find the optimal amount of leverage (daily leverage) to trade with certain timeframes. To achieve this, I will implement a website with an easy UI to backtest strategies.</p>
     </div>
 
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -33,23 +31,48 @@
     <div class="container mt-5">
         <h2 class="mb-4">Graphs</h2>
         <div class="row">
-            <div class="col-md-6 order-md-2">
-                <canvas id="timeStockChart" width="600" height="400"></canvas>
+            <div class="col-md-8 offset-md-2">
+                <canvas id="timeStockChart" width="800" height="600"></canvas>
                 <div class="form-group mt-4">
                     <label class="slider-label" for="leverageRange">Leverage Amount: <span id="leverageAmount">1</span></label>
                     <input type="range" class="form-control-range" id="leverageRange" min="0" max="25" step="0.01" value="1">
                 </div>
-            </div>
-            <div class="col-md-6 order-md-1">
-                <canvas id="leverageReturnsChart" width="600" height="400"></canvas>
                 <div class="form-group mt-4">
-                    <label class="slider-label" for="timeRange">Time Range: <span id="timeRangeLabel">0 - 100</span></label>
-                    
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="ticker" placeholder="Ticker (Ex: SPY)">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" id="submitBtn">Submit</button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="padding: 20px;">
+                        <label for="dropdownMenu">Select a Time Interval:</label>
+                        <select class="form-control" id="dropdownMenu">
+                            <option value="1d">1d</option>
+                            <option value="1w">1w</option>
+                            <option value="1m">1m</option>
+                            <option value="1y">1y</option>
+                        </select>
+                    </div>
+                    <label class="form-control-range" for="timeRange">Time Range: <span id="timeRangeLabel">0 - 100</span></label>
                     <div id="timeRangeSlider"></div>
                 </div>
             </div>
         </div>
+        <div class="row mt-5">
+            <div class="col-md-6 offset-md-3">
+                <canvas id="leverageReturnsChart" width="800" height="600"></canvas>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6 offset-md-3" style="padding: 20px;">
+                <button type="button" class="btn btn-primary btn-block">Calculate</button>
+            </div>
+        </div>
     </div>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>Find us on GitHub: <a href="https://github.com/Mph128/trading" class="text-white">GitHub</a></p>
+    </footer>
 
     <script src="{{ url_for('static', filename='js/leverage_testing.js') }}"></script>
 </body>
