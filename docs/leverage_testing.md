@@ -39,6 +39,6 @@ We can then graph this equation and find the local maxima in a specified range. 
 
 *This is before fees are taken into account*
 
-![SPY leverage analysis from 1994-10-01 to 2023-12-31](/images\Figure_1.png) *Figure 1: SPY leverage analysis from 1994-10-01 to 2023-12-31*
+![SPY leverage analysis from 1994-10-01 to 2023-12-31](/images/Figure_1.png) *Figure 1: SPY leverage analysis from 1994-10-01 to 2023-12-31*
 
 The problem with this approach is that it requires a ton of processing time and is highly impractical for a lighweight research tool. 
