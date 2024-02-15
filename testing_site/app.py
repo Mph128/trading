@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
-import random
+import json
 from processing import leverage_testing as lt
+
 
 app = Flask(__name__)
 
@@ -19,8 +20,8 @@ def leverage_testing():
 
 @app.route('/update_time', methods=['POST'])
 def update_time():
-    min_value = int(request.form['time_min'])
-    max_value = int(request.form['time_max'])
+    min_value = float(request.form['time_min'])
+    max_value = float(request.form['time_max'])
 
     # use min_value and max_value to update the chart
     #.............
@@ -57,6 +58,10 @@ def get_time_range():
     }
     return jsonify(data)
 
+@app.route('/get_stock_data', methods=['GET'])
+def get_stock_data():
+    data = leverage_data.close_prices.to_dict(orient='records')
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
