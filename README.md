@@ -1,8 +1,10 @@
 # Algo Trading
 
-The goal of this project is to create a trading bot that will determine when to buy and sell stocks based off of live market data. 
+The primary goal of this project is to create a custom research tool for backtesting possible strategies in the stock market. The long term goal is to develop a trading bot that will determine when to buy and sell stocks based off of live market data. 
 
-### First, a brief rundown of the python libraries being used in the project:
+Primarily, manual research will be required but eventually trading strategies based off of statistical models will be implemented.
+
+### First, a brief rundown of some of the python libraries being used in the project:
 
 ---
 
@@ -18,6 +20,22 @@ Note that the 1m data is only retrievable for the last 7 days, and anything intr
 ### Scope
 
 yfinance will mostly be used for prototyping. In future, a more reliable system will need to be implemented. A service providing low latency data directly from exchanges such as Polygon or IEX will likely be used in future implementations.
+
+
+## Flask
+Flask is a web framework for Python used to build web applications. It provides tools and libraries for handling web requests, routing URLs to functions, and generating HTML content dynamically.
+
+## Chart.js
+Chart.js is a JavaScript library for creating interactive charts and graphs on web pages. It provides a simple yet powerful API for generating various types of charts, including line charts, bar charts, pie charts, and more.
+
+## SymPy
+SymPy is a Python library for symbolic mathematics. It provides tools for working with symbolic expressions, equations, and algebraic computations.
+
+## NumPy
+NumPy is a Python library for numerical computing. It provides support for large, multi-dimensional arrays and matrices, along with a collection of mathematical functions to operate on these arrays.
+
+## SciPy
+SciPy is a Python library for scientific computing and technical computing. It provides modules for optimization, integration, interpolation, linear algebra, and more.
 
 ---
 
