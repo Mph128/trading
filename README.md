@@ -1,8 +1,8 @@
 # Algo Trading
 
-The goal of this project is to create a trading bot that will determine when to buy and sell stocks based off of live market data. 
+The primary goal of this project is to create a custom research tool for backtesting possible strategies in the stock market. The long term goal is to develop a trading bot that will determine when to buy and sell stocks based off of live market data. 
 
-### First, a brief rundown of the python libraries being used in the project:
+### First, a brief rundown of some of the python libraries being used in the project:
 
 ---
 
@@ -39,3 +39,5 @@ SciPy is a Python library for scientific computing and technical computing. It p
 
 
 
+
+TBC
