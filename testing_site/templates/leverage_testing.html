@@ -39,20 +39,11 @@
                 </div>
                 <div class="form-group mt-4">
                     
-                    <div class="input-group">
+                    <div class="input-group" style="padding: 20px;">
                         <input type="text" class="form-control" id="ticker" placeholder="Ticker (Ex: SPY)">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="button" id="submitBtn">Submit</button>
                         </div>
-                    </div>
-                    <div class="form-group" style="padding: 20px;">
-                        <label for="dropdownMenu">Select a Time Interval:</label>
-                        <select class="form-control" id="dropdownMenu">
-                            <option value="1d">1d</option>
-                            <option value="1w">1w</option>
-                            <option value="1m">1m</option>
-                            <option value="1y">1y</option>
-                        </select>
                     </div>
                     <label class="form-control-range" for="timeRange">Time Range: <span id="timeRangeLabel">0 - 100</span></label>
                     <div id="timeRangeSlider"></div>

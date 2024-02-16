@@ -42,10 +42,24 @@ def update_ticker():
     value = request.form['ticker']
 
     # use value to update the chart
-    #.............
+    global leverage_data 
+    try:
+        leverage_data = lt.LeverageTesting(value, '1d')
+    except:
+        return jsonify({'ticker': 'Invalid Ticker'})
 
     # returns the range to console
     return jsonify({'ticker': value})
+
+# route to get the current ticker
+@app.route('/get_ticker', methods=['GET'])
+def get_ticker():
+    data = {
+        'ticker': leverage_data.get_ticker()
+    }
+    print(data)
+    return jsonify(data)
+
 
 @app.route('/get_time_range', methods=['GET'])
 def get_time_range():

@@ -32,8 +32,7 @@ class LeverageTesting:
         # Shift the 'Pct_Change' data up by one row
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
-
-
+    
 
     #getting a specific close price and a hist of close prices
     def get_close_price(self, date):
@@ -75,7 +74,7 @@ class LeverageTesting:
         # self.update_data_from_time_range()
     def set_time_range_percentage(self, start_percentage, end_percentage):
         self.start_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * start_percentage/100)]
-        self.end_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * end_percentage/100)]
+        self.end_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * end_percentage/100)-1]
         # self.update_data_from_time_range()
 
     #getters for start and end dates

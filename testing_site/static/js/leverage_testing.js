@@ -93,6 +93,13 @@ function update_stock_price_graph() {
                         }]
                     },
                     options: {
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'SPY',
+                                fontSize: 18
+                            }
+                        },
                         scales: {
                             x: {
                                 type: 'category', // Assuming 'Formatted_Date' is categorical data
@@ -124,6 +131,29 @@ function update_stock_price_graph() {
      $('#leverageAmount').text(value);
  }
 
+// Function to update the chart with the current ticker
+function updateChartWithTicker() {
+    // Get the current ticker
+    $.ajax({
+        url: '/get_ticker',
+        type: 'GET',
+        success: function(response) {
+            // Handle the response data
+            console.log(response);
+            // Update the chart title with the current ticker
+            tsc_chart.options.plugins.title.text = response.ticker;
+            // Update the chart
+            tsc_chart.update();
+        },
+        error: function(xhr, status, error) {
+            // Handle errors
+            console.error(error);
+        }
+    });
+}
+
+
+
  // Function to update the label with the current value of the time range
 function updateTimeRange() {
     $.ajax({
@@ -148,6 +178,9 @@ updateTimeRange();
 // Get the current slider values
 
 update_stock_price_graph();
+
+// Update the chart with the current ticker
+updateChartWithTicker();
 
  // Function to update slider display
  function updateSlider(time_min, time_max) {
@@ -175,6 +208,9 @@ update_stock_price_graph();
                 console.error(error);
             }
         });
+        updateTimeRange();
+        update_stock_price_graph();
+        updateChartWithTicker();
     });
 
      // Event listener for the leverage range slider
@@ -184,6 +220,8 @@ update_stock_price_graph();
          updateTimeRange();
          update_stock_price_graph();
      });
+
+
 
      // Event listener for the time range slider
      $("#timeRangeSlider").slider({
