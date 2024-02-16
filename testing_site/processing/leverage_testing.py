@@ -27,17 +27,10 @@ class LeverageTesting:
 
         #close prices for the stock: date, close
         self.close_prices = self.hist[['Formatted_Date','Close']]
-
-        print(self.close_prices)
         #daily changes in the stock price: date, pct_change
-        self.daily_changes = self.close_prices['Close'].pct_change()
+        self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
 
-        #default leverage = 1x
-        self.leverage = 1
-        #leveraged returns for the stock
-        self.leveraged_returns = self.daily_changes * self.leverage
-        #leveraged cumulative returns for the stock(leverage is applied to the *time interval* returns)
-        self.leveraged_cumulative_returns = (1 + self.leveraged_returns).cumprod()
 
 
     #getting a specific close price and a hist of close prices
@@ -69,7 +62,7 @@ class LeverageTesting:
     #setters for interval
     def set_start_date(self, start_date):
         self.start_date = start_date
-        # self.update_data_from_time_range()
+        
 
     def set_end_date(self, end_date):
         self.end_date = end_date
@@ -79,8 +72,8 @@ class LeverageTesting:
         self.end_date = end_date
         # self.update_data_from_time_range()
     def set_time_range_percentage(self, start_percentage, end_percentage):
-        self.start_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * start_percentage/100-1)]
-        self.end_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * end_percentage/100-1)]
+        self.start_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * start_percentage/100)]
+        self.end_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * end_percentage/100)]
         # self.update_data_from_time_range()
 
     #getters for start and end dates
@@ -98,14 +91,6 @@ class LeverageTesting:
         return self.leveraged_cumulative_returns
     
 
-    #update the leveraged returns and leveraged cumulative returns
-    # def update_data_from_time_range(self):
-    #     #TODO: fix this
-    #     # self.dates = self.hist.index[self.start_date:self.end_date]
-    #     self.close_prices = self.hist.loc[self.start_date:self.end_date, 'Close']
-    #     self.daily_changes = self.close_prices.pct_change()
-    #     self.leveraged_returns = self.daily_changes * self.leverage
-    #     self.leveraged_cumulative_returns = (1 + self.leveraged_returns).cumprod()
 
 
     #calculate the optimal leverage equation

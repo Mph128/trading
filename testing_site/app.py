@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     return render_template('home.html')
 
-leverage_data = lt.LeverageTesting('SPY','1d')
+leverage_data = lt.LeverageTesting('spy', '1d')
 
 @app.route('/leverage_testing')
 def leverage_testing():
@@ -26,18 +26,9 @@ def update_time():
     # use min_value and max_value to update the chart
     #.............
     leverage_data.set_time_range_percentage(min_value, max_value)
+
     # returns the range to console
     return jsonify({'time_min': min_value, 'time_max': max_value})
-
-@app.route('/update_leverage', methods=['POST'])
-def update_leverage():
-    value = request.form['leverage']
-
-    # use value to update the chart
-    #.............
-
-    # returns the range to console
-    return jsonify({'leverage': value})
 
 
 @app.route('/update_ticker', methods=['POST'])
