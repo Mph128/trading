@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="jumbotron text-center">
-        <h1 class="display-4">Leverage Testing</h1>
+        <h1 class="display-4">Leverage              Testing</h1>
         <p class="lead">The goal of leverage testing is to find the optimal amount of leverage (daily leverage) to trade with certain timeframes. To achieve this, I will implement a website with an easy UI to backtest strategies.</p>
     </div>
 
@@ -69,8 +69,11 @@
                 <button type="button" class="btn btn-primary btn-block">Calculate</button>
             </div>
         </div>
+        <div class="container mt-5">
+            <!-- Display the Markdown content -->
+            {{ markdown_content | safe }}
+        </div>
     </div>
-
     <footer class="bg-dark text-white text-center py-3">
         <p>Find us on GitHub: <a href="https://github.com/Mph128/trading" class="text-white">GitHub</a></p>
     </footer>

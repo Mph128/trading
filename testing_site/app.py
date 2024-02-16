@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 import json
 from processing import leverage_testing as lt
+import markdown
 
 
 app = Flask(__name__)
@@ -13,9 +14,14 @@ leverage_data = lt.LeverageTesting('spy', '1d')
 
 @app.route('/leverage_testing')
 def leverage_testing():
+    with open('docs\leverage_testing.md', 'r') as f:
+        markdown_content = f.read()
+
+    # Convert Markdown to HTML
+    html_content = markdown.markdown(markdown_content)
 
     #return render_template('leverage_testing.html')
-    return render_template('leverage_testing.html')
+    return render_template('leverage_testing.html',markdown_content=html_content)
 
 
 @app.route('/update_time', methods=['POST'])
