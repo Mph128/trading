@@ -2,8 +2,8 @@
 var tsc_ctx;
 var tsc_chart;
 
-var time_min;
-var time_max;
+var time_min = 0;
+var time_max = 99;
 
 var leveragedCloseData=[];
 
@@ -29,6 +29,8 @@ function update_stock_price_graph() {
 
             if (tsc_ctx) {
                 // get the range of the time slider and determine the start and end index of the data to be displayed
+                console.log('time_min: ', time_min);
+                console.log('time_max: ', time_max);
                 var startIndex = Math.floor(closeData.length * time_min / 99);
                 var endIndex = Math.floor(closeData.length * time_max / 99);
 
@@ -179,6 +181,7 @@ update_stock_price_graph();
      $('#leverageRange').on('input', function() {
          var value = $(this).val();
          updateLeverageAmount(value);
+         updateTimeRange();
          update_stock_price_graph();
      });
 

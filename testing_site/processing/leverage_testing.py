@@ -29,6 +29,8 @@ class LeverageTesting:
         self.close_prices = self.hist[['Formatted_Date','Close']]
         #daily changes in the stock price: date, pct_change
         self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
+        # Shift the 'Pct_Change' data up by one row
+        self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
 
 
