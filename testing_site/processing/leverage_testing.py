@@ -1,4 +1,5 @@
 from data import historical_data
+from analysis_tools import pd_analyzer as analize
 from sympy import symbols, expand
 from scipy.signal import find_peaks
 import numpy as np
@@ -21,9 +22,10 @@ class LeverageTesting:
         self.hist = self.hist.dropna(subset=['Close'])
 
         #start and end date for the stock (default is the entire range of the stock's history)
+        self.leverage_start_date = self.hist['Formatted_Date'][0]
+
         self.start_date = self.hist['Formatted_Date'][0]
         self.end_date = self.hist['Formatted_Date'][-1]
-        self.dates = self.hist['Formatted_Date']
 
         #close prices for the stock: date, close
         self.close_prices = self.hist[['Formatted_Date','Close']]
@@ -32,7 +34,61 @@ class LeverageTesting:
         # Shift the 'Pct_Change' data up by one row
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
+
+        #leverage for the stock (default is 1)
+        self.leverage = 1
+
+        #fees and slippage for the stock (default is 0)
+        self.fees = 0
+        self.slippage = 0
+
+        #daily changes in the stock price
+        self.close_prices['Leveraged_Pct_Change'] = self.close_prices['Pct_Change'] * self.leverage - self.fees - self.slippage
+
+        #leveraged returns for the stock
+        self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
+
+        self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0]).shift(1)
+
+        self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
+
+        print(self.leveraged_returns)
+
     
+
+    def update_data_from_time_range(self):
+        self.close_prices = self.hist[['Formatted_Date','Close']][(self.hist['Formatted_Date'] >= self.leverage_start_date)]
+        self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
+        self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
+        self.close_prices['Leveraged_Pct_Change'] = self.close_prices['Pct_Change'] * self.leverage - self.fees - self.slippage
+        self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
+        self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0]).shift(1)
+        self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
+
+    #update the data from new ticker
+    def update_data_from_ticker(self, ticker):
+        self.ticker = ticker
+        self.hist = historical_data.get_all_historical_data(self.ticker, self.interval)
+        self.hist['Formatted_Date'] = self.hist.index.strftime('%m-%d-%Y')
+        self.hist = self.hist.dropna(subset=['Close'])
+        self.close_prices = self.hist[['Formatted_Date','Close']]
+        self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
+        self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
+        self.close_prices['Leveraged_Pct_Change'] = self.close_prices['Pct_Change'] * self.leverage - self.fees - self.slippage
+        self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
+        self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0]).shift(1)
+        self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
+
+    #calculate the sharpe ratio for time range
+    def calculate_sharpe_ratio(self, risk_free_rate):
+        return analize.sharpe_ratio(self.leveraged_returns, risk_free_rate)
+
+    #calculate the sortino ratio for time range
+    def calculate_sortino_ratio(self, risk_free_rate):
+        return analize.sortino_ratio(self.leveraged_returns, risk_free_rate)
+
 
     #getting a specific close price and a hist of close prices
     def get_close_price(self, date):
@@ -61,10 +117,13 @@ class LeverageTesting:
 
 
     #setters for interval
+    def set_leverage_start_date(self, start_date):
+        self.leverage_start_date = start_date
+        self.update_data_from_time_range()
+        
+    #setters for start and end dates
     def set_start_date(self, start_date):
         self.start_date = start_date
-        
-
     def set_end_date(self, end_date):
         self.end_date = end_date
         # self.update_data_from_time_range()

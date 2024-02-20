@@ -23,6 +23,18 @@ def leverage_testing():
     #return render_template('leverage_testing.html')
     return render_template('leverage_testing.html',markdown_content=html_content)
 
+# route to update the start date
+@app.route('/update_start_date', methods=['POST'])
+def update_start_date():
+    value = request.form['start_date']
+
+    # use value to update the chart
+    #.............
+    leverage_data.set_start_date(value)
+
+    # returns the range to console
+    return jsonify({'start_date': value})
+
 
 @app.route('/update_time', methods=['POST'])
 def update_time():
@@ -42,9 +54,8 @@ def update_ticker():
     value = request.form['ticker']
 
     # use value to update the chart
-    global leverage_data 
     try:
-        leverage_data = lt.LeverageTesting(value, '1d')
+        leverage_data.update_data_from_ticker(value)
     except:
         return jsonify({'ticker': 'Invalid Ticker'})
 

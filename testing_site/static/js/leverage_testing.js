@@ -183,14 +183,28 @@ update_stock_price_graph();
 updateChartWithTicker();
 
  // Function to update slider display
- function updateSlider(time_min, time_max) {
-     var range = time_max - time_min;
-     var percentMin = ((time_min - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
-     var percentMax = ((time_max - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
-     $("#timeRangeSlider").css('background', 'linear-gradient(to right, #007bff ' + percentMin + '%, #007bff ' + percentMax + '%, #ced4da ' + percentMax + '%, #ced4da 100%)');
- }
+function updateSlider(time_min, time_max) {
+    var range = time_max - time_min;
+    var percentMin = ((time_min - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
+    var percentMax = ((time_max - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
+    $("#timeRangeSlider").css('background', 'linear-gradient(to right, #007bff ' + percentMin + '%, #007bff ' + percentMax + '%, #ced4da ' + percentMax + '%, #ced4da 100%)');
+}
 
 
+//update start date
+function updateStartDate(value) {
+    $.ajax({
+        type: "POST",
+        url: "/update_start_date",
+        data: { start_date: value },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
  
  
  $(function() {
@@ -213,45 +227,54 @@ updateChartWithTicker();
         updateChartWithTicker();
     });
 
-     // Event listener for the leverage range slider
-     $('#leverageRange').on('input', function() {
-         var value = $(this).val();
-         updateLeverageAmount(value);
-         updateTimeRange();
-         update_stock_price_graph();
-     });
+    // Event listener for the leverage range slider
+    $('#leverageRange').on('input', function() {
+        var value = $(this).val();
+        updateLeverageAmount(value);
+        updateTimeRange();
+        update_stock_price_graph();
+    });
+
+
+    //event listener for start date slider
+    $('#start_date').on('input', function() {
+        var value = $(this).val();
+        updateStartDate(value);
+        updateTimeRange();
+        update_stock_price_graph();
+    });
 
 
 
-     // Event listener for the time range slider
-     $("#timeRangeSlider").slider({
-         range: true,
-         values: [0, 99],
-         slide: function(event, ui) {
-             // Update chart based on time range
-             // You can implement this logic as needed
+    // Event listener for the time range slider
+    $("#timeRangeSlider").slider({
+        range: true,
+        values: [0, 99],
+        slide: function(event, ui) {
+            // Update chart based on time range
+            // You can implement this logic as needed
 
-             // Get the current slider values
-             time_min = ui.values[0];
-             time_max = ui.values[1];
+            // Get the current slider values
+            time_min = ui.values[0];
+            time_max = ui.values[1];
 
-             // Update the slider background color
-             updateSlider(time_min, time_max);
-             // Update the time range label
-             updateTimeRange();
-             update_stock_price_graph();
+            // Update the slider background color
+            updateSlider(time_min, time_max);
+            // Update the time range label
+            updateTimeRange();
+            update_stock_price_graph();
 
-             $.ajax({
-                 type: "POST",
-                 url: "/update_time",
-                 data: { time_min: time_min, time_max: time_max },
-                 success: function(response) {
-                     console.log(response);
-                 },
-                 error: function(xhr, status, error) {
-                     console.error(error);
-                 }
-             });
+            $.ajax({
+                type: "POST",
+                url: "/update_time",
+                data: { time_min: time_min, time_max: time_max },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
          }
      });
  });
