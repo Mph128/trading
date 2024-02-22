@@ -21,8 +21,8 @@ lt = ltest.LeverageTesting('spy', '1d')
 
 
 # print ("Close Prices:", lt.close_prices)
-print("sharpe ratio 1: " ,lt.get_sharpe_ratio1())
-print("sharpe ratio 2: " ,lt.get_sharpe_ratio2())
+print("sharpe ratio 1: " ,lt.get_leveraged_sharpe_ratio())
+print("sharpe ratio 2: " ,lt.get_unleveraged_sharpe_ratio())
 # print("sortino ratio: ", lt.get_sortino_ratio())
 # print("max drawdown: ", lt.get_max_drawdown())
 # print("annual return: ", lt.get_annual_return())

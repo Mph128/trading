@@ -17,11 +17,11 @@ def sharpe_ratio1(returns, risk_free_rate):
 
 def sharpe_ratio(returns, risk_free_rate):
     average_return = np.mean(returns)
-    print('average_return2: ',average_return)
+    print('average_return: ',average_return)
     excess_return = average_return - get_daily_risk_free_rate(risk_free_rate)
-    print('excess_return2: ',excess_return)
+    print('excess_return: ',excess_return)
     std_dev = np.std(returns)
-    print('std_dev2: ',std_dev * np.sqrt(252))
+    print('std_dev: ',std_dev * np.sqrt(252))
     return excess_return / std_dev * np.sqrt(252)
 
 def sortino_ratio(portfolio_returns, risk_free_rate):

@@ -7,6 +7,73 @@ var time_max = 99;
 
 var leveragedCloseData=[];
 
+var ol_chart;
+var x_values = [];
+var y_values = [];
+
+
+
+// Function to fetch optimal leverage data and update the chart
+function fetchAndUpdateOptimalLeverageChart() {
+    // Make an AJAX request to fetch optimal leverage data from Flask app
+    $.ajax({
+        url: '/calculate_optimal_leverage',
+        type: 'GET',
+        success: function (data) {
+            // Update data with newly fetched values
+            x_values = data.x_values;
+            y_values = data.y_values;
+
+            // Clear existing chart
+            if (ol_chart) {
+                ol_chart.update();
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching data:', error);
+        }
+    });
+}
+
+// Function to plot the optimal leverage chart
+function plotOptimalLeverageChart() {
+    // Create a new Chart instance
+    var ctx = document.getElementById('optimalLeverageChart').getContext('2d');
+    ol_chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: x_values,
+            datasets: [{
+                label: 'Optimal Leverage',
+                data: y_values,
+                borderColor: 'blue',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Optimal Leverage'
+            },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'X'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Y'
+                    }
+                }]
+            }
+        }
+    });
+}
+
 
 function update_stock_price_graph() {
     $.ajax({
@@ -197,14 +264,14 @@ function updateStatistics() {
         url: "/get_statistics",
         success: function(response) {
             console.log(response);
-            $('#sharpeRatio').text(response.sharpe_ratio);
-            $('#cagr').text(response.annual_return);
-            $('#volatility').text(response.annual_volatility);
-            $('#cumulativeReturn').text(response.cumulative_return);
+            $('#sharpeRatio').text(response.l_sharpe_ratio);
+            $('#cagr').text(response.l_annual_return);
+            $('#volatility').text(response.l_annual_volatility);
+            $('#cumulativeReturn').text(response.l_cumulative_return);
             //sortino ratio
-            $('#sortinoRatio').text(response.sortino_ratio);
+            $('#sortinoRatio').text(response.l_sortino_ratio);
             //maximum drawdown
-            $('#maxDrawdown').text(response.max_drawdown);
+            $('#maxDrawdown').text(response.l_max_drawdown);
         },
         error: function(xhr, status, error) {
             console.error(error);
@@ -229,6 +296,11 @@ function updateStartDate(value) {
  
  
  $(function() {
+
+    // // Add event listener to "Calculate" button
+    $('#calculateBtn').click(function() {
+        fetchAndUpdateOptimalLeverageChart();
+    });
 
     // Event listener for the ticker submit button
     $('#submitBtn').click(function() {

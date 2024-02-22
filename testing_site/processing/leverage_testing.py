@@ -35,7 +35,7 @@ class LeverageTesting:
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change']
 
         #leverage for the stock (default is 1)
-        self.leverage = 1
+        self.leverage = 2
 
         #fees and slippage for the stock (default is 0)
         self.fees = 0
@@ -88,8 +88,11 @@ class LeverageTesting:
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
 
     #calculate the sharpe ratio for time range
-    def get_sharpe_ratio(self):
+    def get_leveraged_sharpe_ratio(self):
         return analize.sharpe_ratio(self.leveraged_data, self.risk_free_rate)
+    
+    def get_unleveraged_sharpe_ratio(self):
+        return analize.sharpe_ratio(self.close_prices['Pct_Change'], self.risk_free_rate)
 
     #calculate the sortino ratio for time range
     def get_sortino_ratio(self):
