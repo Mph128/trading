@@ -23,6 +23,26 @@ def leverage_testing():
     #return render_template('leverage_testing.html')
     return render_template('leverage_testing.html',markdown_content=html_content)
 
+#route to get the statistics
+@app.route('/get_statistics', methods=['GET'])
+def get_statistics():
+
+    #get the risk free rate from the form
+
+    
+
+    data = {
+        'sharpe_ratio': leverage_data.get_sharpe_ratio(),
+        'sortino_ratio': leverage_data.get_sortino_ratio(),
+        'max_drawdown': leverage_data.get_max_drawdown(),
+        'annual_return': leverage_data.get_annual_return(),
+        'annual_volatility': leverage_data.get_annual_volatility(),
+        'cumulative_return': leverage_data.get_cumulative_return()
+
+    }
+    return jsonify(data)
+
+
 # route to update the start date
 @app.route('/update_start_date', methods=['POST'])
 def update_start_date():

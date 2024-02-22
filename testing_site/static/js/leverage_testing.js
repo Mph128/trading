@@ -190,6 +190,27 @@ function updateSlider(time_min, time_max) {
     $("#timeRangeSlider").css('background', 'linear-gradient(to right, #007bff ' + percentMin + '%, #007bff ' + percentMax + '%, #ced4da ' + percentMax + '%, #ced4da 100%)');
 }
 
+//updates the statistics of the stock
+function updateStatistics() {
+    $.ajax({
+        type: "GET",
+        url: "/get_statistics",
+        success: function(response) {
+            console.log(response);
+            $('#sharpeRatio').text(response.sharpe_ratio);
+            $('#cagr').text(response.annual_return);
+            $('#volatility').text(response.annual_volatility);
+            $('#cumulativeReturn').text(response.cumulative_return);
+            //sortino ratio
+            $('#sortinoRatio').text(response.sortino_ratio);
+            //maximum drawdown
+            $('#maxDrawdown').text(response.max_drawdown);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
 
 //update start date
 function updateStartDate(value) {
