@@ -8,20 +8,14 @@ def get_daily_risk_free_rate(annual_risk_free_rate):
 
 def sharpe_ratio1(returns, risk_free_rate):
     annualized = annual_return(returns)
-    print('annualized1: ',annualized)
     excess_return = annualized - risk_free_rate
-    print('excess_return1: ',excess_return)
     std_dev = np.std(returns) * np.sqrt(252)
-    print('std_dev1: ',std_dev)
     return excess_return / std_dev
 
 def sharpe_ratio(returns, risk_free_rate):
     average_return = np.mean(returns)
-    print('average_return: ',average_return)
     excess_return = average_return - get_daily_risk_free_rate(risk_free_rate)
-    print('excess_return: ',excess_return)
     std_dev = np.std(returns)
-    print('std_dev: ',std_dev * np.sqrt(252))
     return excess_return / std_dev * np.sqrt(252)
 
 def sortino_ratio(portfolio_returns, risk_free_rate):
@@ -36,7 +30,7 @@ def sortino_ratio(portfolio_returns, risk_free_rate):
     return sortino_ratio
 
 def max_drawdown(portfolio_returns):
-    cumulative_returns = np.cumprod(portfolio_returns)
+    cumulative_returns = np.cumprod(portfolio_returns+1)
     cumulative_max = np.maximum.accumulate(cumulative_returns)
     drawdowns = (cumulative_max - cumulative_returns) / cumulative_max
     max_drawdown = np.max(drawdowns)
@@ -44,14 +38,12 @@ def max_drawdown(portfolio_returns):
 
 def annual_return(portfolio_returns):
     cumulative_returns = np.cumprod(1+portfolio_returns)
-    print('cumulative_returns1: ',cumulative_returns)
     years = len(portfolio_returns) / 252
-    print('years: ',years)
-    print('average daily return: ',(cumulative_returns[-1])**(1/(years*252)) - 1)
     return (cumulative_returns[-1])**(1/years) - 1
 
 def annual_volatility(portfolio_returns):
     return np.std(portfolio_returns) * np.sqrt(252)
 
 def cumulative_return(portfolio_returns):
-    return np.prod(portfolio_returns + 1) - 1
+    total_returns = np.prod(portfolio_returns + 1) - 1
+    return total_returns

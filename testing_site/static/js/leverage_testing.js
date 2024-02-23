@@ -247,6 +247,15 @@ function updateTimeRange() {
     
 }
 
+// function to update all the statistics and graph
+function updateAll() {
+    update_stock_price_graph();
+    updateTimeRange();
+    updateChartWithTicker();
+    updateStatistics();
+}
+
+
 updateTimeRange();
 
 // Get the current slider values
@@ -255,6 +264,24 @@ update_stock_price_graph();
 
 // Update the chart with the current ticker
 // updateChartWithTicker();
+
+updateStatistics();
+
+//update leverage
+function updateLeverage(value) {
+    $.ajax({
+        type: "POST",
+        url: "/update_leverage",
+        data: { leverage: value },
+        success: function(response) {
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+    updateAll();
+}
 
  // Function to update slider display
 function updateSlider(time_min, time_max) {
@@ -271,14 +298,25 @@ function updateStatistics() {
         url: "/get_statistics",
         success: function(response) {
             console.log(response);
-            $('#sharpeRatio').text(response.l_sharpe_ratio);
-            $('#cagr').text(response.l_annual_return);
-            $('#volatility').text(response.l_annual_volatility);
-            $('#cumulativeReturn').text(response.l_cumulative_return);
+            //leveraged statistics
+            $('#sharpeRatio2').text(response.l_sharpe_ratio);
+            $('#cagr2').text(response.l_annual_return);
+            $('#volatility2').text(response.l_annual_volatility);
+            $('#cumulativeReturn2').text(response.l_cumulative_return);
             //sortino ratio
-            $('#sortinoRatio').text(response.l_sortino_ratio);
+            $('#sortinoRatio2').text(response.l_sortino_ratio);
             //maximum drawdown
-            $('#maxDrawdown').text(response.l_max_drawdown);
+            $('#maxDrawdown2').text(response.l_max_drawdown);
+
+            //stock statistics
+            $('#sharpeRatio1').text(response.sharpe_ratio);
+            $('#cagr1').text(response.annual_return);
+            $('#volatility1').text(response.annual_volatility);
+            $('#cumulativeReturn1').text(response.cumulative_return);
+            //sortino ratio
+            $('#sortinoRatio1').text(response.sortino_ratio);
+            //maximum drawdown
+            $('#maxDrawdown1').text(response.max_drawdown);
         },
         error: function(xhr, status, error) {
             console.error(error);
@@ -322,17 +360,26 @@ function updateStartDate(value) {
                 console.error(error);
             }
         });
-        updateTimeRange();
-        update_stock_price_graph();
-        updateChartWithTicker();
+        updateAll();
     });
 
     // Event listener for the leverage range slider
     $('#leverageRange').on('input', function() {
         var value = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: "/update_leverage",
+            data: { leverage: value },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+        updateLeverage(value);
         updateLeverageAmount(value);
-        updateTimeRange();
-        update_stock_price_graph();
+        updateAll();
     });
 
 
@@ -340,8 +387,7 @@ function updateStartDate(value) {
     $('#start_date').on('input', function() {
         var value = $(this).val();
         updateStartDate(value);
-        updateTimeRange();
-        update_stock_price_graph();
+        updateAll();
     });
 
 
@@ -361,8 +407,7 @@ function updateStartDate(value) {
             // Update the slider background color
             updateSlider(time_min, time_max);
             // Update the time range label
-            updateTimeRange();
-            update_stock_price_graph();
+            updateAll();
 
             $.ajax({
                 type: "POST",

@@ -35,20 +35,25 @@ def calculate_optimal_leverage():
 
 
 #route to get the statistics
-@app.route('/get_leveraged_statistics', methods=['GET'])
+@app.route('/get_statistics', methods=['GET'])
 def get_statistics():
 
     #get the risk free rate from the form
 
-    
-
     data = {
         'l_sharpe_ratio': leverage_data.get_leveraged_sharpe_ratio(),
-        'l_sortino_ratio': leverage_data.get_sortino_ratio(),
-        'l_max_drawdown': leverage_data.get_max_drawdown(),
-        'l_annual_return': leverage_data.get_annual_return(),
-        'l_annual_volatility': leverage_data.get_annual_volatility(),
-        'l_cumulative_return': leverage_data.get_cumulative_return()
+        'l_sortino_ratio': leverage_data.get_leveraged_sortino_ratio(),
+        'l_max_drawdown': leverage_data.get_leveraged_max_drawdown(),
+        'l_annual_return': leverage_data.get_leveraged_annual_return(),
+        'l_annual_volatility': leverage_data.get_leveraged_annual_volatility(),
+        'l_cumulative_return': leverage_data.get_leveraged_cumulative_return(),
+
+        'sharpe_ratio': leverage_data.get_sharpe_ratio(),
+        'sortino_ratio': leverage_data.get_sortino_ratio(),
+        'max_drawdown': leverage_data.get_max_drawdown(),
+        'annual_return': leverage_data.get_annual_return(),
+        'annual_volatility': leverage_data.get_annual_volatility(),
+        'cumulative_return': leverage_data.get_cumulative_return()
 
     }
     return jsonify(data)
@@ -102,6 +107,18 @@ def get_ticker():
     print(data)
     return jsonify(data)
 
+
+#update leverage
+@app.route('/update_leverage', methods=['POST'])
+def update_leverage():
+    value = float(request.form['leverage'])
+
+    # use value to update the chart
+    #.............
+    leverage_data.set_leverage(value)
+
+    # returns the range to console
+    return jsonify({'leverage': value})
 
 @app.route('/get_time_range', methods=['GET'])
 def get_time_range():

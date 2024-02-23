@@ -35,7 +35,7 @@ class LeverageTesting:
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change']
 
         #leverage for the stock (default is 1)
-        self.leverage = 2
+        self.leverage = 1
 
         #fees and slippage for the stock (default is 0)
         self.fees = 0
@@ -54,16 +54,19 @@ class LeverageTesting:
 
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
 
-        self.leverages_changes = self.close_prices['Leveraged_Pct_Change']
+        self.leveraged_changes = self.close_prices['Leveraged_Pct_Change'].dropna()
 
-        self.unleveraged_changes = self.close_prices['Pct_Change']
+        self.unleveraged_changes = self.close_prices['Pct_Change'].dropna()
 
         #remove all rows with NaN values
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
 
+    def updateAll(self):
+        self.update_leveraged_returns_from_start_date()
+        self.update_data_from_time_range()
 
-    
-    def update_leverages_returns_from_start_date(self):
+
+    def update_leveraged_returns_from_start_date(self):
         self.close_prices = self.hist[['Formatted_Date','Close']][(self.hist['Formatted_Date'] >= self.leverage_start_date)]
         self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
@@ -81,12 +84,11 @@ class LeverageTesting:
         mask = ((self.close_prices['Formatted_Date'] >= self.start_date) & (self.close_prices['Formatted_Date'] <= self.end_date))
 
         # Select data using the mask
-        self.leverages_changes = self.close_prices.loc[mask, 'Leveraged_Pct_Change']
+        self.leveraged_changes = self.close_prices.loc[mask, 'Leveraged_Pct_Change']
         self.unleveraged_changes = self.close_prices.loc[mask, 'Pct_Change']
 
         #remove all rows with NaN values
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
-
 
     #update the data from new ticker
     def update_data_from_ticker(self, ticker):
@@ -104,32 +106,47 @@ class LeverageTesting:
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
         self.update_data_from_time_range()
 
-    #calculate the sharpe ratio for time range
-    def get_leveraged_sharpe_ratio(self):
-        return analize.sharpe_ratio(self.leverages_changes, self.risk_free_rate)
-    
-    def get_unleveraged_sharpe_ratio(self):
-        return analize.sharpe_ratio(self.close_prices['Pct_Change'], self.risk_free_rate)
 
+        return analize.sharpe_ratio(self.leveraged_changes, self.risk_free_rate)
+    
+    ## LEVERAGED STATISTICS
+            #calculate the sharpe ratio for time range
+    def get_leveraged_sharpe_ratio(self):
+        return analize.sharpe_ratio(self.leveraged_changes, self.risk_free_rate)
+    # 'l_sortino_ratio': leverage_data.get_leveraged_sortino_ratio(),
+    def get_leveraged_sortino_ratio(self):
+        return analize.sortino_ratio(self.leveraged_changes, self.risk_free_rate)
+    # 'l_max_drawdown': leverage_data.get_leveraged_max_drawdown(),
+    def get_leveraged_max_drawdown(self):
+        return analize.max_drawdown(self.leveraged_changes)
+    # 'l_annual_return': leverage_data.get_leveraged_annual_return(),
+    def get_leveraged_annual_return(self):
+        return analize.annual_return(self.leveraged_changes)
+    # 'l_annual_volatility': leverage_data.get_leveraged_annual_volatility(),
+    def get_leveraged_annual_volatility(self):
+        return analize.annual_volatility(self.leveraged_changes)
+    # 'l_cumulative_return': leverage_data.get_leveraged_cumulative_return(),
+    def get_leveraged_cumulative_return(self):  
+        return (analize.cumulative_return(self.leveraged_changes))
+
+    ## UNLEVERAGED STATISTICS
+    def get_sharpe_ratio(self):
+        return analize.sharpe_ratio(self.unleveraged_changes, self.risk_free_rate)
     #calculate the sortino ratio for time range
     def get_sortino_ratio(self):
-        return analize.sortino_ratio(self.leverages_changes, self.risk_free_rate)
-    
+        return analize.sortino_ratio(self.unleveraged_changes, self.risk_free_rate) 
     #calculate the maximum drawdown for time range
     def get_max_drawdown(self):
-        return analize.max_drawdown(self.leverages_changes)
-    
+        return analize.max_drawdown(self.unleveraged_changes) 
     #calculate the annual return for time range 
     def get_annual_return(self):
-        return analize.annual_return(self.leverages_changes)
-    
+        return analize.annual_return(self.unleveraged_changes)
     #calculate the annual volatility for time range
     def get_annual_volatility(self):
-        return analize.annual_volatility(self.leverages_changes)
-    
+        return analize.annual_volatility(self.unleveraged_changes)
     #calculate the cumulative return for time range
     def get_cumulative_return(self):
-        return analize.cumulative_return(self.leverages_changes)
+        return (analize.cumulative_return(self.unleveraged_changes))
 
     #getting a specific close price and a hist of close prices
     def get_close_price(self, date):
@@ -140,7 +157,7 @@ class LeverageTesting:
     #getters and setters for leverage
     def set_leverage(self, leverage):
         self.leverage = leverage
-        # self.update_data_from_time_range()
+        self.updateAll()
 
     def get_leverage(self):
         return self.leverage

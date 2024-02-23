@@ -1,2 +1,1 @@
-as ltest
-from data import historical_data
+'sharpe_ratio': leverage_data.get_sharpe_ratio(),
