@@ -13,6 +13,10 @@
 ---
 ## Issues:
 
+### Overall Efficiency
+
+I have not spent any time streamlining the site. It is a heavyweight draft of what it could be. As such, efficiency is some low hanging fruit for improvement. I will try to balance making things run more smoothly and efficiently with creating new tools and features.
+
 ### Runtime to find optimal leverage
 
 Strategy: 
@@ -60,6 +64,23 @@ source: Alpha Generation and Risk Smoothing using Managed Volatility
 
 # Ideas
 
+## MACD Strategy to Reduce Volatility
+
+MACD can be used to filter out trades during choppy or ranging market conditions, focusing only on trades that align with the prevailing trend. By avoiding trades in volatile sideways markets, this approach can potentially reduce the overall volatility of returns. Maybe combine MACD with other indicators or filters that aim to reduce volatility or smooth price movements. For example, using MACD in conjunction with a moving average crossover strategy can provide additional confirmation signals and potentially reduce false signals, thereby decreasing overall volatility. This could increase the saftey of using leverage
+
+## Dollar cost Averaging
+
+Leveraged positions are inherently more sensitive to market volatility. Dollar-cost averaging can help mitigate the impact of short-term market fluctuations by spreading out the investment over time, potentially reducing the volatility associated with the leveraged position.
+
+DCA can be used as a risk management tool when employing leverage. By investing a fixed amount of money at regular intervals, investors may mitigate the risk associated with timing the market or making a large, lump-sum leveraged investment at an inopportune time.
+
+## Fees
+
+Obviously leveraged ETFs come at a cost. Due to fees, and potential tracking errors, LETFs may achieve a return slightly lower than expected. When simulating returns it is important to take this into account.
+
+---
+# Implemented
+
 ## Calculate risk
 
 It would be good to calculate and provide **Max Drawdown, Sharpe Ratio, Sortino Ratio, CAGR, STDEV** 
@@ -101,15 +122,6 @@ CAGR (Compound Annual Growth Rate): CAGR is a measure of the annual growth rate 
 #### Standard Deviation
 Standard Deviation of Stock Prices: Standard deviation measures the dispersion or variability of a set of values from their mean (average). When applied to stock prices, it quantifies the extent of price fluctuations around the average price over a specific period of time. A higher standard deviation indicates greater volatility, implying larger price swings, while a lower standard deviation suggests more stable prices. Investors often use standard deviation as a measure of risk, with higher values indicating riskier investments.
 
-## Dollar cost Averaging
-
-Leveraged positions are inherently more sensitive to market volatility. Dollar-cost averaging can help mitigate the impact of short-term market fluctuations by spreading out the investment over time, potentially reducing the volatility associated with the leveraged position.
-
-DCA can be used as a risk management tool when employing leverage. By investing a fixed amount of money at regular intervals, investors may mitigate the risk associated with timing the market or making a large, lump-sum leveraged investment at an inopportune time.
-
-## Fees
-
-Obviously leveraged ETFs come at a cost. Due to fees, and potential tracking errors, LETFs may achieve a return slightly lower than expected. When simulating returns it is important to take this into account.
 
 ---
 # Great Sources:
