@@ -92,7 +92,14 @@ function update_stock_price_graph() {
             var changeData = response.map(function(item) {
                 return item.Pct_Change;
             });
-            
+
+            var leverageChangeData = response.map(function(item) {
+                return item.Leveraged_Pct_Change;
+            });
+
+            leveragedReturns = response.map(function(item) {
+                return item.Leveraged_Returns;
+            });
 
             if (tsc_ctx) {
                 // get the range of the time slider and determine the start and end index of the data to be displayed
@@ -247,7 +254,7 @@ updateTimeRange();
 update_stock_price_graph();
 
 // Update the chart with the current ticker
-updateChartWithTicker();
+// updateChartWithTicker();
 
  // Function to update slider display
 function updateSlider(time_min, time_max) {

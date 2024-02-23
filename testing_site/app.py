@@ -10,7 +10,7 @@ app = Flask(__name__)
 def index():
     return render_template('home.html')
 
-leverage_data = lt.LeverageTesting('spy', '1d')
+leverage_data = lt.LeverageTesting('SPY', '1d')
 
 @app.route('/leverage_testing')
 def leverage_testing():

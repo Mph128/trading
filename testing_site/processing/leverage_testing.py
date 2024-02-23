@@ -16,7 +16,7 @@ class LeverageTesting:
         self.hist = historical_data.get_all_historical_data(self.ticker, self.interval)
 
         #add a col for formatted date
-        self.hist['Formatted_Date'] = self.hist.index.strftime('%m-%d-%Y')
+        self.hist['Formatted_Date'] = self.hist.index.strftime('%Y-%m-%d')
 
         #remove rows that dont have close price
         self.hist = self.hist.dropna(subset=['Close'])
@@ -49,13 +49,18 @@ class LeverageTesting:
 
         #leveraged returns for the stock
         self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
-        print(self.close_prices)
+
         self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0])
 
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
-        print(self.close_prices)
-        self.leveraged_data = self.close_prices['Leveraged_Pct_Change']
-        print(self.leveraged_data)
+
+        self.leverages_changes = self.close_prices['Leveraged_Pct_Change']
+
+        self.unleveraged_changes = self.close_prices['Pct_Change']
+
+        #remove all rows with NaN values
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
+
 
     
     def update_leverages_returns_from_start_date(self):
@@ -69,8 +74,19 @@ class LeverageTesting:
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
         self.update_data_from_time_range()
 
+    #update the data from time range
     def update_data_from_time_range(self):
-        self.leveraged_data = self.close_prices['Leveraged_Pct_Change'][(self.close_prices['Formatted_Date'] >= self.start_date) & (self.close_prices['Formatted_Date'] <= self.end_date)]
+
+        # Filter data based on the time range
+        mask = ((self.close_prices['Formatted_Date'] >= self.start_date) & (self.close_prices['Formatted_Date'] <= self.end_date))
+
+        # Select data using the mask
+        self.leverages_changes = self.close_prices.loc[mask, 'Leveraged_Pct_Change']
+        self.unleveraged_changes = self.close_prices.loc[mask, 'Pct_Change']
+
+        #remove all rows with NaN values
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
+
 
     #update the data from new ticker
     def update_data_from_ticker(self, ticker):
@@ -86,33 +102,34 @@ class LeverageTesting:
         self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
         self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0]).shift(1)
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
+        self.update_data_from_time_range()
 
     #calculate the sharpe ratio for time range
     def get_leveraged_sharpe_ratio(self):
-        return analize.sharpe_ratio(self.leveraged_data, self.risk_free_rate)
+        return analize.sharpe_ratio(self.leverages_changes, self.risk_free_rate)
     
     def get_unleveraged_sharpe_ratio(self):
         return analize.sharpe_ratio(self.close_prices['Pct_Change'], self.risk_free_rate)
 
     #calculate the sortino ratio for time range
     def get_sortino_ratio(self):
-        return analize.sortino_ratio(self.leveraged_data, self.risk_free_rate)
+        return analize.sortino_ratio(self.leverages_changes, self.risk_free_rate)
     
     #calculate the maximum drawdown for time range
     def get_max_drawdown(self):
-        return analize.max_drawdown(self.leveraged_data)
+        return analize.max_drawdown(self.leverages_changes)
     
     #calculate the annual return for time range 
     def get_annual_return(self):
-        return analize.annual_return(self.leveraged_data)
+        return analize.annual_return(self.leverages_changes)
     
     #calculate the annual volatility for time range
     def get_annual_volatility(self):
-        return analize.annual_volatility(self.leveraged_data)
+        return analize.annual_volatility(self.leverages_changes)
     
     #calculate the cumulative return for time range
     def get_cumulative_return(self):
-        return analize.cumulative_return(self.leveraged_data)
+        return analize.cumulative_return(self.leverages_changes)
 
     #getting a specific close price and a hist of close prices
     def get_close_price(self, date):
@@ -136,11 +153,10 @@ class LeverageTesting:
 
     #getters and setters for ticker
     def get_ticker(self):
-        return self.ticker
+        return self.ticker.upper()
     def set_ticker(self, ticker):
         self.ticker = ticker
-        self.hist = historical_data.get_all_historical_data(self.ticker, self.interval)
-        self.close_prices = self.hist['Close']
+        self.update_data_from_ticker(ticker)
         
 
 
@@ -152,17 +168,18 @@ class LeverageTesting:
     #setters for start and end dates
     def set_start_date(self, start_date):
         self.start_date = start_date
+        self.update_data_from_time_range()
     def set_end_date(self, end_date):
         self.end_date = end_date
-        # self.update_data_from_time_range()
+        self.update_data_from_time_range()
     def set_time_range(self, start_date, end_date):
         self.start_date = start_date
         self.end_date = end_date
-        # self.update_data_from_time_range()
+        self.update_data_from_time_range()
     def set_time_range_percentage(self, start_percentage, end_percentage):
         self.start_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * start_percentage/100)]
         self.end_date = self.close_prices['Formatted_Date'][int(len(self.close_prices) * end_percentage/100)-1]
-        # self.update_data_from_time_range()
+        self.update_data_from_time_range()
 
     #getters for start and end dates
     def get_start_date(self):   
@@ -190,20 +207,24 @@ class LeverageTesting:
         # Initialize the equation
         eq = 1
 
+        print('Calculating the equation...')
         # Iterate over daily changes and update the equation
-        for change in self.daily_changes[1:]:
+        for change in self.unleveraged_changes:
             eq *= (change * x + 1)
 
+        print('Converting the equation to a Python function...')
         # Convert the SymPy equation to a Python function
         eq_func = lambda x_val: eq.subs(x, x_val)
 
+        
+        print('Generating values...')
         # Generate x values
-        x_values = np.linspace(0, 25, 1000)
+        x_values = np.linspace(0, 15, 50)
 
         # Calculate y values using the equation
         y_values = np.array([eq_func(x_val) for x_val in x_values])
 
-
+        print('Finding the peaks...')
         # Find the peaks    # Find peaks
         peaks, _ = find_peaks(y_values)
 
@@ -211,13 +232,13 @@ class LeverageTesting:
         print("X values corresponding to peaks:", x_values[peaks])
 
         # Plot the equation and highlight peaks
-        # plt.plot(x_values, y_values)
-        # plt.plot(x_values[peaks], y_values[peaks], "x")
-        # plt.title('Peaks of the Equation')
-        # plt.xlabel('x')
-        # plt.ylabel('y')
-        # plt.grid(True)
-        # plt.show()
+        plt.plot(x_values, y_values)
+        plt.plot(x_values[peaks], y_values[peaks], "x")
+        plt.title('Peaks of the Equation')
+        plt.xlabel('x')
+        plt.ylabel('y')
+        plt.grid(True)
+        
 
         return x_values, y_values, peaks
     
