@@ -15,13 +15,16 @@ function fetch_and_update_optimal_leverage_chart() {
         type: 'GET',
         success: function (data) {
             // Update data with newly fetched values
-            x_values = data.x_values;
-            y_values = data.y_values;
+            x_values = data.ol_x_values;
+            console.log('x_values: ', x_values);
+            y_values = data.ol_y_values;
+            console.log('y_values: ', y_values);
 
-            // Clear existing chart
-            if (ol_chart) {
-                ol_chart.update();
-            }
+            // Update the chart with the new data
+            ol_chart.data.labels = x_values;
+            ol_chart.data.datasets[0].data = y_values;
+
+            ol_chart.update();
         },
         error: function (error) {
             console.error('Error fetching data:', error);
@@ -31,41 +34,61 @@ function fetch_and_update_optimal_leverage_chart() {
 
 // Function to plot the optimal leverage chart
 function plot_optimal_leverage_chart() {
-    // Create a new Chart instance
-    var ctx = document.getElementById('optimalLeverageChart').getContext('2d');
-    ol_chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: x_values,
-            datasets: [{
-                label: 'Optimal Leverage',
-                data: y_values,
-                borderColor: 'blue',
-                borderWidth: 1,
-                fill: false
-            }]
+
+    // Make an AJAX request to fetch optimal leverage data from Flask app
+    $.ajax({
+        url: '/calculate_optimal_leverage',
+        type: 'GET',
+        success: function (data) {
+            // Update data with newly fetched values
+            x_values = data.ol_x_values;
+            y_values = data.ol_y_values;
+
+            console.log('x_values: ', x_values);
+            console.log('y_values: ', y_values);
+
+            // Create a new Chart instance
+            var ctx = document.getElementById('optimalLeverageChart').getContext('2d');
+            ol_chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: x_values,
+                    datasets: [{
+                        label: 'Total Return',
+                        data: y_values,
+                        borderColor: 'blue',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Optimal Leverage'
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Leverage Amount'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Return'
+                            }
+                        }
+                    }
+                }
+            });
         },
-        options: {
-            title: {
-                display: true,
-                text: 'Optimal Leverage'
-            },
-            scales: {
-                xAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'X'
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Y'
-                    }
-                }]
-            }
+        error: function (error) {
+            console.error('Error fetching data:', error);
         }
     });
+    
+    
 }
 
 function update_stock_price_graph() {
@@ -327,7 +350,12 @@ $(function() {
 
     // // Add event listener to "Calculate" button
     $('#calculateBtn').click(function() {
-        fetch_and_update_optimal_leverage_chart();
+        if (ol_chart) {
+            fetch_and_update_optimal_leverage_chart();
+        }
+        else {
+            plot_optimal_leverage_chart();
+        }
     });
 
     // Event listener for the ticker submit button

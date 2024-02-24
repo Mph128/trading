@@ -3,7 +3,7 @@ from data import historical_data
 import time
 lt = ltest.LeverageTesting('spy', '1d')
 
-# lt.set_time_range('2004-10-01', '2010-11-01')
+lt.set_time_range('2004-10-01', '2010-11-01')
 
 print('start date: ', lt.get_start_date())
 print('end date: ', lt.get_end_date())
@@ -29,5 +29,9 @@ print("cumulative return: ", lt.get_cumulative_return())
 
 
 ## calculate the optimal leverage equation
-# lt.calculate_leverage_equation()
+x_vals, y_vals, peaks = lt.calculate_leverage_equation()
+
+print('x values: ', x_vals)
+print('y values: ', y_vals)
+print('peaks: ', peaks)
 

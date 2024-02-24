@@ -11,6 +11,7 @@ def index():
     return render_template('home.html')
 
 leverage_data = lt.LeverageTesting('SPY', '1d')
+leverage_data.set_time_range('2009-10-01', '2010-11-01')
 
 @app.route('/leverage_testing')
 def leverage_testing():
@@ -25,14 +26,26 @@ def leverage_testing():
 
 
 # calculates optimal leverage
-@app.route('/calculate_optimal_leverage', methods=['POST'])
+@app.route('/calculate_optimal_leverage', methods=['GET'])
 def calculate_optimal_leverage():
     # calculate the optimal leverage equation
+    print("Calculating optimal leverage equation")
     x_values, y_values, peaks = leverage_data.calculate_leverage_equation()
+    print("Optimal leverage equation calculated")
+    
+    # Print data types of x_values and y_values
+    print("Data type of x_values:", type(x_values))
+    print("Data type of y_values:", type(y_values))
 
+    data = {
+        'ol_x_values': x_values,
+        'ol_y_values': y_values
+    }
+
+    print('Data:', data)
+    print("Data type of data:", type(data))
     # returns the optimal leverage to console
-    return jsonify({'x_values': x_values, 'y_values': y_values, 'peaks': peaks})
-
+    return jsonify(data)
 
 #route to get the statistics
 @app.route('/get_statistics', methods=['GET'])

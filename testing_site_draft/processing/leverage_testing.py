@@ -1,6 +1,6 @@
 from data import historical_data
 from processing import analizer as analize
-from sympy import symbols, expand
+from sympy import symbols, expand, lambdify
 from scipy.signal import find_peaks
 import numpy as np
 import matplotlib.pyplot as plt
@@ -210,9 +210,8 @@ class LeverageTesting:
     def get_leveraged_cumulative_returns(self):
         return self.leveraged_cumulative_returns
 
-    #calculate the optimal leverage equation
+    # calculate the optimal leverage equation
     def calculate_leverage_equation(self):
-
         # Define symbolic variable
         x = symbols('x')
 
@@ -222,35 +221,24 @@ class LeverageTesting:
         print('Calculating the equation...')
         # Iterate over daily changes and update the equation
         for change in self.unleveraged_changes:
-            eq *= (change * x + 1)
+            eq *= (change * x + 1.0)
 
         print('Converting the equation to a Python function...')
         # Convert the SymPy equation to a Python function
-        eq_func = lambda x_val: eq.subs(x, x_val)
+        eq_func = lambdify(x, eq)
 
-        
         print('Generating values...')
         # Generate x values
-        x_values = np.linspace(0, 15, 50)
-
+        x_values = np.linspace(0, 15, 61).tolist()
+    
         # Calculate y values using the equation
-        y_values = np.array([eq_func(x_val) for x_val in x_values])
+        y_values = np.array([eq_func(x_val) for x_val in x_values]).tolist()
 
         print('Finding the peaks...')
-        # Find the peaks    # Find peaks
+        # Find the peaks
         peaks, _ = find_peaks(y_values)
 
         # Print the x values corresponding to the peaks
-        print("X values corresponding to peaks:", x_values[peaks])
-
-        # Plot the equation and highlight peaks
-        plt.plot(x_values, y_values)
-        plt.plot(x_values[peaks], y_values[peaks], "x")
-        plt.title('Peaks of the Equation')
-        plt.xlabel('x')
-        plt.ylabel('y')
-        plt.grid(True)
-        
+        print("X values corresponding to peaks:", [x_values[peak] for peak in peaks])
 
         return x_values, y_values, peaks
-    
