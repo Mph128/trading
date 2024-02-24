@@ -175,8 +175,6 @@ class LeverageTesting:
         self.ticker = ticker
         self.update_data_from_ticker(ticker)
         
-
-
     #setters for interval
     def set_leverage_start_date(self, start_date):
         self.leverage_start_date = start_date
@@ -211,9 +209,6 @@ class LeverageTesting:
         return self.leveraged_returns
     def get_leveraged_cumulative_returns(self):
         return self.leveraged_cumulative_returns
-    
-
-
 
     #calculate the optimal leverage equation
     def calculate_leverage_equation(self):

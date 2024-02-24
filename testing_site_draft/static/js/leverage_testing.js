@@ -1,20 +1,14 @@
-
 var tsc_ctx;
 var tsc_chart;
-
 var time_min = 0;
 var time_max = 99;
-
-var leveragedCloseData=[];
-
+var leveraged_close_data = [];
 var ol_chart;
 var x_values = [];
 var y_values = [];
 
-
-
 // Function to fetch optimal leverage data and update the chart
-function fetchAndUpdateOptimalLeverageChart() {
+function fetch_and_update_optimal_leverage_chart() {
     // Make an AJAX request to fetch optimal leverage data from Flask app
     $.ajax({
         url: '/calculate_optimal_leverage',
@@ -36,7 +30,7 @@ function fetchAndUpdateOptimalLeverageChart() {
 }
 
 // Function to plot the optimal leverage chart
-function plotOptimalLeverageChart() {
+function plot_optimal_leverage_chart() {
     // Create a new Chart instance
     var ctx = document.getElementById('optimalLeverageChart').getContext('2d');
     ol_chart = new Chart(ctx, {
@@ -74,30 +68,29 @@ function plotOptimalLeverageChart() {
     });
 }
 
-
 function update_stock_price_graph() {
     $.ajax({
         url: '/get_stock_data',
         type: 'GET',
         success: function(response) {
             // Extract data from the response
-            var closeData = response.map(function(item) {
+            var close_data = response.map(function(item) {
                 return item.Close;
             });
 
-            var dateLabels = response.map(function(item) {
+            var date_labels = response.map(function(item) {
                 return item.Formatted_Date;
             });
 
-            var changeData = response.map(function(item) {
+            var change_data = response.map(function(item) {
                 return item.Pct_Change;
             });
 
-            var leverageChangeData = response.map(function(item) {
+            var leverage_change_data = response.map(function(item) {
                 return item.Leveraged_Pct_Change;
             });
 
-            leveragedReturns = response.map(function(item) {
+            var leveraged_returns = response.map(function(item) {
                 return item.Leveraged_Returns;
             });
 
@@ -105,62 +98,62 @@ function update_stock_price_graph() {
                 // get the range of the time slider and determine the start and end index of the data to be displayed
                 console.log('time_min: ', time_min);
                 console.log('time_max: ', time_max);
-                var startIndex = Math.floor(closeData.length * time_min / 99);
-                var endIndex = Math.floor(closeData.length * time_max / 99);
+                var start_index = Math.floor(close_data.length * time_min / 99);
+                var end_index = Math.floor(close_data.length * time_max / 99);
 
                 // Extract the data to be displayed
-                var middleCloseData = closeData.slice(startIndex, endIndex);
-                var middleDateLabels = dateLabels.slice(startIndex, endIndex);
-                var middleChangeData = changeData.slice(startIndex, endIndex);
+                var middle_close_data = close_data.slice(start_index, end_index);
+                var middle_date_labels = date_labels.slice(start_index, end_index);
+                var middle_change_data = change_data.slice(start_index, end_index);
 
                 //get the start price of the middle data
-                var startPrice = middleCloseData[0];
-                leveragedCloseData=[];
-                //add the start price to the leveragedCloseData array
-                leveragedCloseData.push(startPrice);
+                var start_price = middle_close_data[0];
+                leveraged_close_data = [];
+                //add the start price to the leveraged_close_data array
+                leveraged_close_data.push(start_price);
 
-                // reset the leveragedCloseData array
-                leveragedChangeData=[];
+                // reset the leveraged_close_data array
+                leverage_change_data = [];
 
                 //calculate the leveraged close price
-                var leveragedChangeData = middleChangeData.map(function(item) {
+                leverage_change_data = middle_change_data.map(function(item) {
                     return (item * $('#leverageRange').val()+1);
                 });
 
                 //calculate the leveraged close prices
-                for (var i = 0; i < leveragedChangeData.length; i++) {
-                    startPrice = startPrice * (leveragedChangeData[i]);
-                    leveragedCloseData.push(startPrice);
+                for (var i = 0; i < leverage_change_data.length; i++) {
+                    start_price = start_price * (leverage_change_data[i]);
+                    leveraged_close_data.push(start_price);
                 }
 
-                console.log('middle daily change: ', middleChangeData)
-                console.log('middle close price: ', middleCloseData);
-                console.log('leveraged daily change: ', leveragedChangeData);
-                console.log('leveraged close price: ', leveragedCloseData);
+                console.log('middle daily change: ', middle_change_data)
+                console.log('middle close price: ', middle_close_data);
+                console.log('leveraged daily change: ', leverage_change_data);
+                console.log('leveraged close price: ', leveraged_close_data);
 
                 // Update the existing chart
-                tsc_chart.data.datasets[0].data = middleCloseData;
-                tsc_chart.data.labels = middleDateLabels;
-                tsc_chart.data.datasets[1].data = leveragedCloseData;
+                tsc_chart.data.datasets[0].data = middle_close_data;
+                tsc_chart.data.labels = middle_date_labels;
+                tsc_chart.data.datasets[1].data = leveraged_close_data;
                 tsc_chart.update(); // Update the chart
             } else {
                 // Create the chart
-                leveragedCloseData = closeData;
+                leveraged_close_data = close_data;
                 tsc_ctx = document.getElementById('timeStockChart').getContext('2d');
                 tsc_chart = new Chart(tsc_ctx, {
                     type: 'line',
                     data: {
-                        labels: dateLabels,
+                        labels: date_labels,
                         datasets: [{
                             label: 'Stock Price',
-                            data: closeData,
+                            data: close_data,
                             borderColor: 'rgba(54, 162, 235, 1)',
                             borderWidth: 1,
                             fill: false
                         },
                         {
                             label: 'Leveraged Stock Price',
-                            data: leveragedCloseData,
+                            data: leveraged_close_data,
                             borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 1,
                             fill: false
@@ -200,13 +193,18 @@ function update_stock_price_graph() {
     });
 }
 
- // Function to update the label with the current value of the leverage amount
- function updateLeverageAmount(value) {
+// Function to update the label with the current value of the leverage amount
+function update_leverage_amount(value) {
      $('#leverageAmount').text(value);
- }
+}
+
+// Function to format value as percentage with 3 decimal places
+function formatPercentage(value) {
+    return (value * 100).toFixed(3) + '%';
+}
 
 // Function to update the chart with the current ticker
-function updateChartWithTicker() {
+function update_chart_with_ticker() {
     // Get the current ticker
     $.ajax({
         url: '/get_ticker',
@@ -226,10 +224,8 @@ function updateChartWithTicker() {
     });
 }
 
-
-
- // Function to update the label with the current value of the time range
-function updateTimeRange() {
+// Function to update the label with the current value of the time range
+function update_time_range() {
     $.ajax({
         url: '/get_time_range',
         type: 'GET',
@@ -244,31 +240,22 @@ function updateTimeRange() {
             console.error(error);
         }
     });
-    
 }
 
-// function to update all the statistics and graph
-function updateAll() {
+// Function to update all the statistics and graph
+function update_all() {
     update_stock_price_graph();
-    updateTimeRange();
-    updateChartWithTicker();
-    updateStatistics();
+    update_time_range();
+    update_chart_with_ticker();
+    update_statistics();
 }
 
-
-updateTimeRange();
-
-// Get the current slider values
-
+update_time_range();
 update_stock_price_graph();
-
-// Update the chart with the current ticker
-// updateChartWithTicker();
-
-updateStatistics();
+update_statistics();
 
 //update leverage
-function updateLeverage(value) {
+function update_leverage(value) {
     $.ajax({
         type: "POST",
         url: "/update_leverage",
@@ -280,43 +267,40 @@ function updateLeverage(value) {
             console.error(error);
         }
     });
-    updateAll();
+    update_all();
 }
 
- // Function to update slider display
-function updateSlider(time_min, time_max) {
+// Function to update slider display
+function update_slider(time_min, time_max) {
     var range = time_max - time_min;
-    var percentMin = ((time_min - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
-    var percentMax = ((time_max - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
-    $("#timeRangeSlider").css('background', 'linear-gradient(to right, #007bff ' + percentMin + '%, #007bff ' + percentMax + '%, #ced4da ' + percentMax + '%, #ced4da 100%)');
+    var percent_min = ((time_min - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
+    var percent_max = ((time_max - $("#timeRangeSlider").slider("option", "time_min")) / range) * 100;
+    $("#timeRangeSlider").css('background', 'linear-gradient(to right, #007bff ' + percent_min + '%, #007bff ' + percent_max + '%, #ced4da ' + percent_max + '%, #ced4da 100%)');
 }
 
 //updates the statistics of the stock
-function updateStatistics() {
+function update_statistics() {
     $.ajax({
         type: "GET",
         url: "/get_statistics",
         success: function(response) {
             console.log(response);
-            //leveraged statistics
-            $('#sharpeRatio2').text(response.l_sharpe_ratio);
-            $('#cagr2').text(response.l_annual_return);
-            $('#volatility2').text(response.l_annual_volatility);
-            $('#cumulativeReturn2').text(response.l_cumulative_return);
-            //sortino ratio
-            $('#sortinoRatio2').text(response.l_sortino_ratio);
-            //maximum drawdown
-            $('#maxDrawdown2').text(response.l_max_drawdown);
+            // Update the card text with formatted values
+            //unleveraged statistics
+            $('#sharpeRatio1').text(formatPercentage(response.sharpe_ratio));
+            $('#sortinoRatio1').text(formatPercentage(response.sortino_ratio));
+            $('#maxDrawdown1').text(formatPercentage(response.max_drawdown));
+            $('#cagr1').text(formatPercentage(response.annual_return));
+            $('#volatility1').text(formatPercentage(response.annual_volatility));
+            $('#cumulativeReturn1').text(formatPercentage(response.cumulative_return));
 
-            //stock statistics
-            $('#sharpeRatio1').text(response.sharpe_ratio);
-            $('#cagr1').text(response.annual_return);
-            $('#volatility1').text(response.annual_volatility);
-            $('#cumulativeReturn1').text(response.cumulative_return);
-            //sortino ratio
-            $('#sortinoRatio1').text(response.sortino_ratio);
-            //maximum drawdown
-            $('#maxDrawdown1').text(response.max_drawdown);
+            //leveraged statistics
+            $('#sharpeRatio2').text(formatPercentage(response.l_sharpe_ratio));
+            $('#sortinoRatio2').text(formatPercentage(response.l_sortino_ratio));
+            $('#maxDrawdown2').text(formatPercentage(response.l_max_drawdown));
+            $('#cagr2').text(formatPercentage(response.l_annual_return));
+            $('#volatility2').text(formatPercentage(response.l_annual_volatility));
+            $('#cumulativeReturn2').text(formatPercentage(response.l_cumulative_return));
         },
         error: function(xhr, status, error) {
             console.error(error);
@@ -325,7 +309,7 @@ function updateStatistics() {
 }
 
 //update start date
-function updateStartDate(value) {
+function update_start_date(value) {
     $.ajax({
         type: "POST",
         url: "/update_start_date",
@@ -338,13 +322,12 @@ function updateStartDate(value) {
         }
     });
 }
- 
- 
- $(function() {
+
+$(function() {
 
     // // Add event listener to "Calculate" button
     $('#calculateBtn').click(function() {
-        fetchAndUpdateOptimalLeverageChart();
+        fetch_and_update_optimal_leverage_chart();
     });
 
     // Event listener for the ticker submit button
@@ -360,7 +343,7 @@ function updateStartDate(value) {
                 console.error(error);
             }
         });
-        updateAll();
+        update_all();
     });
 
     // Event listener for the leverage range slider
@@ -377,17 +360,17 @@ function updateStartDate(value) {
                 console.error(error);
             }
         });
-        updateLeverage(value);
-        updateLeverageAmount(value);
-        updateAll();
+        update_leverage(value);
+        update_leverage_amount(value);
+        update_all();
     });
 
 
     //event listener for start date slider
     $('#start_date').on('input', function() {
         var value = $(this).val();
-        updateStartDate(value);
-        updateAll();
+        update_start_date(value);
+        update_all();
     });
 
 
@@ -405,9 +388,9 @@ function updateStartDate(value) {
             time_max = ui.values[1];
 
             // Update the slider background color
-            updateSlider(time_min, time_max);
+            update_slider(time_min, time_max);
             // Update the time range label
-            updateAll();
+            update_all();
 
             $.ajax({
                 type: "POST",
