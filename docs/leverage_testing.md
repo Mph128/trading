@@ -82,6 +82,10 @@ DCA can be used as a risk management tool when employing leverage. By investing 
 
 Obviously leveraged ETFs come at a cost. Due to fees, and potential tracking errors, LETFs may achieve a return slightly lower than expected. When simulating returns it is important to take this into account.
 
+## Preloaded optimal leverage graph
+
+on startup loading the optimal leverage graph takes a long time to calculate so just store the data for spy in a json file and load it in
+
 ---
 # Implemented
 
