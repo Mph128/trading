@@ -94,8 +94,11 @@ class LeverageTesting:
     def update_data_from_ticker(self, ticker):
         self.ticker = ticker
         self.hist = historical_data.get_all_historical_data(self.ticker, self.interval)
-        self.hist['Formatted_Date'] = self.hist.index.strftime('%m-%d-%Y')
+        self.hist['Formatted_Date'] = self.hist.index.strftime('%Y-%m-%d')
         self.hist = self.hist.dropna(subset=['Close'])
+        self.leverage_start_date = self.hist['Formatted_Date'][0]
+        self.start_date = self.hist['Formatted_Date'][0]
+        self.end_date = self.hist['Formatted_Date'][-1]
         self.close_prices = self.hist[['Formatted_Date','Close']]
         self.close_prices['Pct_Change'] = self.close_prices['Close'].pct_change()
         self.close_prices['Pct_Change'] = self.close_prices['Pct_Change'].shift(-1)
@@ -104,10 +107,9 @@ class LeverageTesting:
         self.leveraged_returns = (self.close_prices['Leveraged_Pct_Change'] + 1).cumprod()
         self.close_prices['Leveraged_Returns'] = (self.leveraged_returns * self.close_prices['Close'][0]).shift(1)
         self.close_prices['Leveraged_Returns'][0] = self.close_prices['Close'][0]
-        self.update_data_from_time_range()
-
-
-        return analize.sharpe_ratio(self.leveraged_changes, self.risk_free_rate)
+        self.leveraged_changes = self.close_prices['Leveraged_Pct_Change'].dropna()
+        self.unleveraged_changes = self.close_prices['Pct_Change'].dropna()
+        self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
     
     ## LEVERAGED STATISTICS
             #calculate the sharpe ratio for time range
@@ -210,7 +212,41 @@ class LeverageTesting:
     def get_leveraged_cumulative_returns(self):
         return self.leveraged_cumulative_returns
 
-    # calculate the optimal leverage equation
+    #calculating optimal leverage by testing
+    def test_optimal_leverage(self):
+        # Define the leverage values to test
+        leverage_values = np.linspace(0, 10, 101).tolist()
+
+        # Initialize the list to store the results
+        leverage_results = []
+
+        # Iterate over the leverage values
+        for leverage in leverage_values:
+            # Calculate the leveraged changes
+            leveraged_changes = self.unleveraged_changes * leverage
+
+            # Calculate the leveraged returns
+            leveraged_returns = (leveraged_changes + 1).cumprod()
+
+            # Calculate the Sharpe ratio
+            # sharpe_ratio = analize.sharpe_ratio(leveraged_changes, self.risk_free_rate)
+
+            total_return = leveraged_returns[-1]
+
+            # Append the results to the list
+            leverage_results.append(total_return)
+
+
+
+        # # Convert the results to a DataFrame
+        # results_df = pd.DataFrame(results, columns=['Leverage', 'Sharpe_Ratio'])
+
+        # # Find the leverage value with the highest Sharpe ratio
+        # optimal_leverage = results_df.loc[results_df['Sharpe_Ratio'].idxmax()]
+
+        return leverage_values, leverage_results
+
+    # calculate the optimal leverage equation (Not in use...highly inefficient)
     def calculate_leverage_equation(self):
         # Define symbolic variable
         x = symbols('x')
@@ -225,14 +261,22 @@ class LeverageTesting:
 
         print('Converting the equation to a Python function...')
         # Convert the SymPy equation to a Python function
-        eq_func = lambdify(x, eq)
+        eq_func = lambda x_val: eq.subs(x, x_val)
 
         print('Generating values...')
         # Generate x values
-        x_values = np.linspace(0, 15, 61).tolist()
+        x_values = np.linspace(0, 10, 101).tolist()
+
+        print('X values:')
+        print(x_values)
     
         # Calculate y values using the equation
         y_values = np.array([eq_func(x_val) for x_val in x_values]).tolist()
+
+        for i in range(len(y_values)):
+            y_values[i] = str(y_values[i])
+        print('Y values:')
+        print(y_values)
 
         print('Finding the peaks...')
         # Find the peaks
@@ -241,4 +285,4 @@ class LeverageTesting:
         # Print the x values corresponding to the peaks
         print("X values corresponding to peaks:", [x_values[peak] for peak in peaks])
 
-        return x_values, y_values, peaks
+        return x_values, y_values

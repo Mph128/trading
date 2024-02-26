@@ -62,12 +62,22 @@ function plot_optimal_leverage_chart() {
                     }]
                 },
                 options: {
+                    labels: {
+                        display: true,
+                        text: 'Leverage',
+                    },
                     title: {
                         display: true,
                         text: 'Optimal Leverage'
                     },
                     scales: {
                         x: {
+                            ticks: {
+                                precision: 1, // Set the precision to 1 decimal place
+                                callback: function(value, index, values) {
+                                    return value.toFixed(1)/10; // Format the value as a number with 1 decimal place
+                                }
+                            },
                             title: {
                                 display: true,
                                 text: 'Leverage Amount'
@@ -268,14 +278,16 @@ function update_time_range() {
 // Function to update all the statistics and graph
 function update_all() {
     update_stock_price_graph();
-    update_time_range();
     update_chart_with_ticker();
     update_statistics();
+    fetch_and_update_optimal_leverage_chart();
+    update_time_range();
 }
 
 update_time_range();
 update_stock_price_graph();
 update_statistics();
+plot_optimal_leverage_chart();
 
 //update leverage
 function update_leverage(value) {
@@ -348,16 +360,6 @@ function update_start_date(value) {
 
 $(function() {
 
-    // // Add event listener to "Calculate" button
-    $('#calculateBtn').click(function() {
-        if (ol_chart) {
-            fetch_and_update_optimal_leverage_chart();
-        }
-        else {
-            plot_optimal_leverage_chart();
-        }
-    });
-
     // Event listener for the ticker submit button
     $('#submitBtn').click(function() {
         $.ajax({
@@ -374,34 +376,18 @@ $(function() {
         update_all();
     });
 
-    // Event listener for the leverage range slider
+    // Event listener for the leverage range slider to change the leverage amount shown
     $('#leverageRange').on('input', function() {
         var value = $(this).val();
-        $.ajax({
-            type: "POST",
-            url: "/update_leverage",
-            data: { leverage: value },
-            success: function(response) {
-                console.log(response);
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-        update_leverage(value);
         update_leverage_amount(value);
-        update_all();
     });
 
-
-    //event listener for start date slider
-    $('#start_date').on('input', function() {
+     // Event listener for the leverage range slider to update the leverage data
+     $('#leverageRange').on('change', function() {
         var value = $(this).val();
-        update_start_date(value);
+        update_leverage(value);
         update_all();
     });
-
-
 
     // Event listener for the time range slider
     $("#timeRangeSlider").slider({
@@ -417,9 +403,7 @@ $(function() {
 
             // Update the slider background color
             update_slider(time_min, time_max);
-            // Update the time range label
-            update_all();
-
+            
             $.ajax({
                 type: "POST",
                 url: "/update_time",
@@ -431,6 +415,35 @@ $(function() {
                     console.error(error);
                 }
             });
-         }
-     });
+
+            // Update the time range label
+            update_time_range();
+        },
+        change: function(event, ui) {
+        // Update chart based on time range
+        // You can implement this logic as needed
+
+        // Get the current slider values
+        time_min = ui.values[0];
+        time_max = ui.values[1];
+
+        // Update the slider background color
+        update_slider(time_min, time_max);
+
+
+        $.ajax({
+            type: "POST",
+            url: "/update_time",
+            data: { time_min: time_min, time_max: time_max },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+
+        update_all();
+        } 
+    });
  });

@@ -59,6 +59,10 @@ Where μ is the mean daily return of the market or index, and σ is the volatili
 
 source: Alpha Generation and Risk Smoothing using Managed Volatility
 
+4. Just test the differenct amuonts of leverage. I am only plotting maybe 50-100 datapoints so running a test that many times will not b nearly as hard nor will it scale as quickly as trying to find the actual equation. This is the approach i will implement 
+
+    *Note: after timing different approaches this seems to come out ahead and will serve the scope of these tests.*
+
 
 ---
 

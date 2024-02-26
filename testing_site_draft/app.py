@@ -11,7 +11,6 @@ def index():
     return render_template('home.html')
 
 leverage_data = lt.LeverageTesting('SPY', '1d')
-leverage_data.set_time_range('2009-10-01', '2010-11-01')
 
 @app.route('/leverage_testing')
 def leverage_testing():
@@ -30,16 +29,16 @@ def leverage_testing():
 def calculate_optimal_leverage():
     # calculate the optimal leverage equation
     print("Calculating optimal leverage equation")
-    x_values, y_values, peaks = leverage_data.calculate_leverage_equation()
+    x_values, y_values = leverage_data.test_optimal_leverage()
     print("Optimal leverage equation calculated")
-    
+
     # Print data types of x_values and y_values
     print("Data type of x_values:", type(x_values))
     print("Data type of y_values:", type(y_values))
 
     data = {
         'ol_x_values': x_values,
-        'ol_y_values': y_values
+        'ol_y_values': y_values,
     }
 
     print('Data:', data)
