@@ -16,13 +16,16 @@ function fetch_and_update_optimal_leverage_chart() {
         success: function (data) {
             // Update data with newly fetched values
             x_values = data.ol_x_values;
-            console.log('x_values: ', x_values);
+            // console.log('x_values: ', x_values);
             y_values = data.ol_y_values;
-            console.log('y_values: ', y_values);
+            // console.log('y_values: ', y_values);
+            ol_sharpe_ratio_y_values = data.ol_sharpe_ratio_y_values;
+            console.log('ol_sharpe_ratio_y_values: ', ol_sharpe_ratio_y_values);
 
             // Update the chart with the new data
             ol_chart.data.labels = x_values;
             ol_chart.data.datasets[0].data = y_values;
+            ol_chart.data.datasets[1].data = ol_sharpe_ratio_y_values;
 
             ol_chart.update();
         },
@@ -43,9 +46,12 @@ function plot_optimal_leverage_chart() {
             // Update data with newly fetched values
             x_values = data.ol_x_values;
             y_values = data.ol_y_values;
+            ol_sharpe_ratio_y_values = data.ol_sharpe_ratio_y_values;
 
-            console.log('x_values: ', x_values);
-            console.log('y_values: ', y_values);
+
+
+            // console.log('x_values: ', x_values);
+            // console.log('y_values: ', y_values);
 
             // Create a new Chart instance
             var ctx = document.getElementById('optimalLeverageChart').getContext('2d');
@@ -58,7 +64,16 @@ function plot_optimal_leverage_chart() {
                         data: y_values,
                         borderColor: 'blue',
                         borderWidth: 1,
-                        fill: false
+                        fill: false,
+                        yAxisID: 'return-y-axis' // Assign this dataset to the primary y-axis
+                    },
+                    {
+                        label: 'Sharpe Ratio',
+                        data: ol_sharpe_ratio_y_values,
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        fill: false,
+                        yAxisID: 'sharpe-y-axis' // Assign this dataset to the secondary y-axis
                     }]
                 },
                 options: {
@@ -83,12 +98,23 @@ function plot_optimal_leverage_chart() {
                                 text: 'Leverage Amount'
                             }
                         },
-                        y: {
+                        yAxes: [{
+                            id: 'return-y-axis', // Primary y-axis
+                            type: 'linear',
+                            position: 'left',
                             title: {
                                 display: true,
                                 text: 'Return'
                             }
-                        }
+                        }, {
+                            id: 'sharpe-y-axis', // Secondary y-axis
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Sharpe Ratio'
+                            }
+                        }]
                     }
                 }
             });

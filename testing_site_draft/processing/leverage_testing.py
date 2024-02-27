@@ -219,6 +219,7 @@ class LeverageTesting:
 
         # Initialize the list to store the results
         leverage_results = []
+        sharpe_ratio_results = []
 
         # Iterate over the leverage values
         for leverage in leverage_values:
@@ -229,23 +230,37 @@ class LeverageTesting:
             leveraged_returns = (leveraged_changes + 1).cumprod()
 
             # Calculate the Sharpe ratio
-            # sharpe_ratio = analize.sharpe_ratio(leveraged_changes, self.risk_free_rate)
+            sharpe_ratio = analize.sharpe_ratio(leveraged_changes, self.risk_free_rate)
+
+            sharpe_ratio_results.append(sharpe_ratio)
 
             total_return = leveraged_returns[-1]
 
             # Append the results to the list
             leverage_results.append(total_return)
+            
+        # returns: leverage values, leverage results, leverage optimized for return, highest total return, sharpe ratio results, leverage optimized for sharpe ratio, highest sharpe ratio
+        return leverage_values, leverage_results, leverage_values[leverage_results.index(max(leverage_results))], max(leverage_results), sharpe_ratio_results, leverage_values[sharpe_ratio_results.index(max(sharpe_ratio_results))], max(sharpe_ratio_results)
 
+    def test_sharpe_ratio(self):
+        # Define the leverage values to test
+        leverage_values = np.linspace(0, 10, 101).tolist()
 
+        # Initialize the list to store the results
+        leverage_results = []
 
-        # # Convert the results to a DataFrame
-        # results_df = pd.DataFrame(results, columns=['Leverage', 'Sharpe_Ratio'])
+        # Iterate over the leverage values
+        for leverage in leverage_values:
+            # Calculate the leveraged changes
+            leveraged_changes = self.unleveraged_changes * leverage
 
-        # # Find the leverage value with the highest Sharpe ratio
-        # optimal_leverage = results_df.loc[results_df['Sharpe_Ratio'].idxmax()]
+            # Calculate the Sharpe ratio
+            sharpe_ratio = analize.sharpe_ratio(leveraged_changes, self.risk_free_rate)
+
+            # Append the results to the list
+            leverage_results.append(sharpe_ratio)
 
         return leverage_values, leverage_results
-
     # calculate the optimal leverage equation (Not in use...highly inefficient)
     def calculate_leverage_equation(self):
         # Define symbolic variable

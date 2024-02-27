@@ -29,20 +29,27 @@ def leverage_testing():
 def calculate_optimal_leverage():
     # calculate the optimal leverage equation
     print("Calculating optimal leverage equation")
-    x_values, y_values = leverage_data.test_optimal_leverage()
+
+    # gets leverage values, leverage results, leverage optimized for return, highest total return, sharpe ratio results, leverage optimized for sharpe ratio, highest sharpe ratio from test leverage
+    x_values, return_y_values, optimized_leverage, highest_total_return, sharpe_ratio_y_values, optimized_sharpe_leverage, highest_sharpe_ratio = leverage_data.test_optimal_leverage()
     print("Optimal leverage equation calculated")
 
     # Print data types of x_values and y_values
-    print("Data type of x_values:", type(x_values))
-    print("Data type of y_values:", type(y_values))
+    # print("Data type of x_values:", type(x_values))
+    # print("Data type of y_values:", type(y_values))
 
     data = {
         'ol_x_values': x_values,
-        'ol_y_values': y_values,
+        'ol_y_values': return_y_values,
+        'optimized_leverage': optimized_leverage,
+        'highest_total_return': highest_total_return,
+        'ol_sharpe_ratio_y_values': sharpe_ratio_y_values,
+        'optimized_sharpe_leverage': optimized_sharpe_leverage,
+        'highest_sharpe_ratio': highest_sharpe_ratio
     }
 
     print('Data:', data)
-    print("Data type of data:", type(data))
+    # print("Data type of data:", type(data))
     # returns the optimal leverage to console
     return jsonify(data)
 
