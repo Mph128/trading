@@ -12,6 +12,7 @@ lt = ltest.LeverageTesting('spy', '1d')
 # print('end date: ', lt.get_end_date())
 
 
+################################################################
 ## Testing the statistics
 
 # print('Leveraged Statistics')
@@ -30,47 +31,68 @@ lt = ltest.LeverageTesting('spy', '1d')
 # print("cumulative return: ", lt.get_cumulative_return())
 
 
+################################################################
 ## Testing the leverage equations
 
-equation_times = []
-test_times = []
+# equation_times = []
+# test_times = []
 
-lt.set_end_date('2015-01-01')
+# lt.set_end_date('2015-01-01')
 
-for i in range(20):
-    start_date = str(1995 + i) + '-01-01'
-    lt.set_start_date(start_date)
+# for i in range(20):
+#     start_date = str(1995 + i) + '-01-01'
+#     lt.set_start_date(start_date)
 
-    # #start timer
-    # start_time = time.time()
+#     # #start timer
+#     # start_time = time.time()
 
-    # #calculate leverage equation
-    # x_vals, y_vals = lt.calculate_leverage_equation()
+#     # #calculate leverage equation
+#     # x_vals, y_vals = lt.calculate_leverage_equation()
 
-    # #stop timer
-    # stop_time = time.time()
+#     # #stop timer
+#     # stop_time = time.time()
 
-    # equation_times.append(stop_time - start_time)
+#     # equation_times.append(stop_time - start_time)
 
-    #start timer
-    start_time = time.time()
+#     #start timer
+#     start_time = time.time()
 
-    #test for leverage data
-    x_vals, y_vals = lt.test_optimal_leverage()
+#     #test for leverage data
+#     x_vals, y_vals = lt.test_optimal_leverage()
 
-    #stop timer
-    stop_time = time.time()
+#     #stop timer
+#     stop_time = time.time()
 
-    test_times.append(stop_time - start_time)
+#     test_times.append(stop_time - start_time)
 
-# print('Equation Times:', equation_times)
-print('Test Times:', test_times)
+# # print('Equation Times:', equation_times)
+# print('Test Times:', test_times)
 
-# plt.plot(equation_times, label='Equation Times')
-plt.plot(test_times, label='Test Times')
-plt.legend()
+# # plt.plot(equation_times, label='Equation Times')
+# plt.plot(test_times, label='Test Times')
+# plt.legend()
+# plt.show()
+
+
+################################################################
+## Testing random leverage
+num_tests = 1000
+max_leverage = 8
+
+optimal_leverages, optimal_sharpe_ratios = lt.test_time_ranges(num_tests=num_tests, max_leverage=max_leverage)
+
+# Plotting the optimal leverages
+plt.figure(figsize=(10, 5))
+plt.hist(optimal_leverages, bins=max_leverage*5, color='blue', edgecolor='black')
+plt.title('Histogram of Optimal Leverages')
+plt.xlabel('Optimal Leverages')
+plt.ylabel('Frequency')
 plt.show()
 
-
-
-
+# Plotting the optimal sharpe ratios
+plt.figure(figsize=(10, 5))
+plt.hist(optimal_sharpe_ratios, max_leverage*5, color='green', edgecolor='black')
+plt.title('Histogram of Optimal Sharpe Ratios')
+plt.xlabel('Optimal Sharpe Ratios')
+plt.ylabel('Frequency')
+plt.show()

@@ -82,9 +82,29 @@ DCA can be used as a risk management tool when employing leverage. By investing 
 
 Obviously leveraged ETFs come at a cost. Due to fees, and potential tracking errors, LETFs may achieve a return slightly lower than expected. When simulating returns it is important to take this into account.
 
-## Preloaded optimal leverage graph
+## Finding optimal leverage over a time range
 
-on startup loading the optimal leverage graph takes a long time to calculate so just store the data for spy in a json file and load it in
+To find a level of leverage that could be recommended, it woul be important to test how leverage holds up over different time ranges throughout history. 
+
+### Implementation 1
+
+The first idea is to generate random time ranges and find the optimal leverage for that range. We can do this for a certain number of time ranges, say 1000, and get a histogram of the optimal leverages. I wrote some code that generated 1000 random time ranges (of varying lengths) of SPY and calculated and graphed the optimal leverage for each range. I optimized for sharpe ratio and for returns so there were 2 graphs (shown below)
+
+![returns ](/images/optimalleveragesforreturns.png) *Figure 2: Leverage optimized for returns*
+
+![sharpe ratio](/images/optimalleveragesforsharperatios.png) *Figure 3: Leverage optimized for Sharpe ratio*
+
+The 0 and 8 bins have a high frequency of occurance simply because they represent all leverages below 0 and above 8 respectivly. 
+
+One issue with this approach is that data in the middle of the full time range available for analysis will likely be oversampled and data at either end of the range will be undersampled. For example: SPY data runs from 1993 to 2024 so if we sample 2 random dates the likelyhood that 2005 will be in the sampled date range will be higher than the likelyhood 1993 will be in the date range. This means that data from 2005 will have a higher impact on our histogram data.
+
+### Implementation 2
+
+The idea for implementation 2 is that we can sample time ranges of a se interval. This will still have a little bias for data from from the middle of the full time range, bu should be better if the interval is small enough, say 2 years. Unfortunatly, for investors with a time horizon of longer than 2 years, this data may be less useful. 
+
+### Implementation 3
+
+To make the tool perhapse more useful to longer term investors we can try to show a trend for how daily leverage effects expected return as we increase time in the market. maybe we can start sampling time ranges of 2 years, plot that data, then increase time range increment to 3 years and plot the data next to it. We should be able to see what happens to the mean, standard deviation, and skewness of the bell curve as we increase the time range interval.
 
 ---
 # Implemented

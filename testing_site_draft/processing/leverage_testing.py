@@ -61,6 +61,48 @@ class LeverageTesting:
         #remove all rows with NaN values
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
 
+    #test a random set of time ranges to determine optimal leverage
+    def test_time_ranges(self, num_tests=100, max_leverage=10):
+
+        #lists to store optimal leverage and sharpe ratios
+        optimal_leverages = []
+        optimal_sharpe_ratios = []
+
+        def get_random_dates():
+             # Generate two random dates within the range
+            random_dates = np.random.choice(self.close_prices['Formatted_Date'], 2)
+
+            #order the dates
+            random_dates = np.sort(random_dates)
+
+            start_date = random_dates[0]
+            end_date = random_dates[1]
+
+            return start_date, end_date
+
+        for i in range(num_tests):
+            start_date, end_date = get_random_dates()
+
+            #set the time range
+            self.set_time_range(start_date, end_date)
+
+            #get data from test_optimal_leverage
+            x_values, return_y_values, optimized_leverage, highest_total_return, sharpe_ratio_y_values, optimized_sharpe_leverage, highest_sharpe_ratio = self.test_optimal_leverage(max_leverage)
+
+            #append the data to the lists
+            optimal_leverages.append(optimized_leverage)
+            optimal_sharpe_ratios.append(optimized_sharpe_leverage)
+
+        #return the optimal leverages and sharpe ratios
+        return optimal_leverages, optimal_sharpe_ratios
+
+
+
+
+
+
+
+
     def updateAll(self):
         self.update_leveraged_returns_from_start_date()
         self.update_data_from_time_range()
@@ -164,6 +206,12 @@ class LeverageTesting:
     def get_leverage(self):
         return self.leverage
 
+    def get_hist(self):
+        return self.hist
+    
+    def get_all_formatted_dates(self):
+        return self.hist['Formatted_Date']
+    
     #getters and setters for risk free rate
     def get_risk_free_rate(self):
         return self.risk_free_rate
@@ -213,9 +261,9 @@ class LeverageTesting:
         return self.leveraged_cumulative_returns
 
     #calculating optimal leverage by testing
-    def test_optimal_leverage(self):
+    def test_optimal_leverage(self, max_leverage=10):
         # Define the leverage values to test
-        leverage_values = np.linspace(0, 10, 101).tolist()
+        leverage_values = np.linspace(0, max_leverage, 101).tolist()
 
         # Initialize the list to store the results
         leverage_results = []

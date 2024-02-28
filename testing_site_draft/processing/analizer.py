@@ -15,7 +15,7 @@ def sharpe_ratio(returns, risk_free_rate):
     sharpe = excess_return / std_dev
     if sharpe < 0:
         return 0
-    # return sharpe
+    return sharpe
     return sharpe
 
 def sharpe_ratio1(returns, risk_free_rate):
@@ -47,8 +47,13 @@ def max_drawdown(portfolio_returns):
 def annual_return(portfolio_returns):
     cumulative_returns = np.cumprod(1+portfolio_returns)
     years = len(portfolio_returns) / 252
-    if cumulative_returns[-1] < 0.000000001:
+    if cumulative_returns[-1] < 0.000001 and cumulative_returns[-1] > -0.000001:
         return 0
+    # print ('cumulative_returns: ',cumulative_returns)
+    # print('cumulative_returns[-1]: ',cumulative_returns[-1])
+    # print('years: ',years)
+    # print(1/years)
+    # print('cumulative_returns[-1]**(1/years): ',cumulative_returns[-1]**(1/years))
     return (cumulative_returns[-1])**(1/years) - 1
 
 def annual_volatility(portfolio_returns):
