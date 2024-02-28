@@ -65,7 +65,7 @@ function plot_optimal_leverage_chart() {
                         borderColor: 'blue',
                         borderWidth: 1,
                         fill: false,
-                        yAxisID: 'return-y-axis' // Assign this dataset to the primary y-axis
+                        yAxisID: 'return_y_axis' // Assign this dataset to the primary y-axis
                     },
                     {
                         label: 'Sharpe Ratio',
@@ -73,7 +73,7 @@ function plot_optimal_leverage_chart() {
                         borderColor: 'red',
                         borderWidth: 1,
                         fill: false,
-                        yAxisID: 'sharpe-y-axis' // Assign this dataset to the secondary y-axis
+                        yAxisID: 'sharpe_y_axis' // Assign this dataset to the secondary y-axis
                     }]
                 },
                 options: {
@@ -98,23 +98,22 @@ function plot_optimal_leverage_chart() {
                                 text: 'Leverage Amount'
                             }
                         },
-                        yAxes: [{
-                            id: 'return-y-axis', // Primary y-axis
-                            type: 'linear',
-                            position: 'left',
-                            title: {
-                                display: true,
-                                text: 'Return'
-                            }
-                        }, {
-                            id: 'sharpe-y-axis', // Secondary y-axis
+                        sharpe_y_axis:{
                             type: 'linear',
                             position: 'right',
                             title: {
                                 display: true,
                                 text: 'Sharpe Ratio'
                             }
-                        }]
+                        },
+                        return_y_axis:{
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Return'
+                                }
+                        }
                     }
                 }
             });

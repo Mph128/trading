@@ -47,7 +47,7 @@ def max_drawdown(portfolio_returns):
 def annual_return(portfolio_returns):
     cumulative_returns = np.cumprod(1+portfolio_returns)
     years = len(portfolio_returns) / 252
-    if cumulative_returns[-1] < 0.001:
+    if cumulative_returns[-1] < 0.000000001:
         return 0
     return (cumulative_returns[-1])**(1/years) - 1
 
