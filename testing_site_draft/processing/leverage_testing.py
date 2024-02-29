@@ -5,6 +5,7 @@ from scipy.signal import find_peaks
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from datetime import datetime
 class LeverageTesting:
 
     def __init__(self, ticker, interval):
@@ -62,14 +63,15 @@ class LeverageTesting:
         self.close_prices = self.close_prices.dropna(subset=['Pct_Change'])
 
     #test a random set of time ranges to determine optimal leverage
-    def test_time_ranges(self, num_tests=100, max_leverage=10):
+    def test_random_time_ranges(self, num_tests=100, max_leverage=10):
 
         #lists to store optimal leverage and sharpe ratios
         optimal_leverages = []
         optimal_sharpe_ratios = []
+        holding_periods = []
 
         def get_random_dates():
-             # Generate two random dates within the range
+            # Generate two random dates within the range
             random_dates = np.random.choice(self.close_prices['Formatted_Date'], 2)
 
             #order the dates
@@ -78,10 +80,17 @@ class LeverageTesting:
             start_date = random_dates[0]
             end_date = random_dates[1]
 
-            return start_date, end_date
+            #calculate the holding period
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            holding_period = (end_date - start_date).days / 365 * 252
+
+            return start_date, end_date, holding_period
 
         for i in range(num_tests):
-            start_date, end_date = get_random_dates()
+            start_date, end_date, holding_period = get_random_dates()
+
+            holding_periods.append(holding_period)
 
             #set the time range
             self.set_time_range(start_date, end_date)
@@ -97,8 +106,33 @@ class LeverageTesting:
         return optimal_leverages, optimal_sharpe_ratios
 
 
+    def test_time_ranges(self, num_tests=100, max_leverage=10, interval = 252):
+        #lists to store optimal leverage and sharpe ratios
+        optimal_leverages = []
+        optimal_sharpe_ratios = []
+
+        def get_time_period():
+            # Generate a date range of *interval* days
+            time_period = np.arange(0, len(self.close_prices), interval).tolist()
+
+            print( time_period)
+
+        get_time_period()
 
 
+        for i in range(num_tests):
+            #set the time range
+            self.set_time_range_percentage(i*interval, (i+1)*interval)
+
+            #get data from test_optimal_leverage
+            x_values, return_y_values, optimized_leverage, highest_total_return, sharpe_ratio_y_values, optimized_sharpe_leverage, highest_sharpe_ratio = self.test_optimal_leverage(max_leverage)
+
+            #append the data to the lists
+            optimal_leverages.append(optimized_leverage)
+            optimal_sharpe_ratios.append(optimized_sharpe_leverage)
+
+        #return the optimal leverages and sharpe ratios
+        return optimal_leverages, optimal_sharpe_ratios
 
 
 

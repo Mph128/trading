@@ -76,23 +76,29 @@ lt = ltest.LeverageTesting('spy', '1d')
 
 ################################################################
 ## Testing random leverage
-num_tests = 1000
-max_leverage = 8
+num_tests = 10
+max_leverage = 10
 
-optimal_leverages, optimal_sharpe_ratios = lt.test_time_ranges(num_tests=num_tests, max_leverage=max_leverage)
+## Implementation 1
+
+# optimal_leverages, optimal_sharpe_ratios = lt.test_time_ranges(num_tests=num_tests, max_leverage=max_leverage)
 
 # Plotting the optimal leverages
-plt.figure(figsize=(10, 5))
-plt.hist(optimal_leverages, bins=max_leverage*5, color='blue', edgecolor='black')
-plt.title('Histogram of Optimal Leverages')
-plt.xlabel('Optimal Leverages')
-plt.ylabel('Frequency')
-plt.show()
+# plt.figure(figsize=(10, 5))
+# plt.hist(optimal_leverages, bins=max_leverage*5, color='blue', edgecolor='black')
+# plt.title('Histogram of Optimal Leverages')
+# plt.xlabel('Optimal Leverages')
+# plt.ylabel('Frequency')
+# plt.show()
 
-# Plotting the optimal sharpe ratios
-plt.figure(figsize=(10, 5))
-plt.hist(optimal_sharpe_ratios, max_leverage*5, color='green', edgecolor='black')
-plt.title('Histogram of Optimal Sharpe Ratios')
-plt.xlabel('Optimal Sharpe Ratios')
-plt.ylabel('Frequency')
-plt.show()
+# # Plotting the optimal sharpe ratios
+# plt.figure(figsize=(10, 5))
+# plt.hist(optimal_sharpe_ratios, max_leverage*5, color='green', edgecolor='black')
+# plt.title('Histogram of Optimal Sharpe Ratios')
+# plt.xlabel('Optimal Sharpe Ratios')
+# plt.ylabel('Frequency')
+# plt.show()
+
+## Implementation 2
+
+lt.test_time_ranges()
