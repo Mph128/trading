@@ -29,7 +29,7 @@ Graph the output: Graphical representation of the output is essential for visual
 
 Identify the optimal leverage level: Determine the leverage level that maximizes the desired investment objective for the specific time range. This could involve selecting the leverage level with the highest risk-adjusted returns, the lowest drawdowns, or a combination of factors tailored to the investor's preferences and risk tolerance.
 
-
+## [Link to Leverage Testing](docs/leverage_testing.md)
 
 ### A brief rundown of some of the python libraries being used in the project:
 
